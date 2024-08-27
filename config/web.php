@@ -34,7 +34,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                // ...
+                'calculator' => 'site/calculator',
             ],
         ],
     ],
