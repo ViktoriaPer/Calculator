@@ -28,6 +28,8 @@ class SiteController extends Controller
 
     public function actionCalculator()
     {
-        return "Калькулятор!";
+        $this->layout = 'blanc';
+
+        return $this->render('calculator');
     }
 }
