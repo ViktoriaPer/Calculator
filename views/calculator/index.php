@@ -1,5 +1,5 @@
 <?php
-
+namespace app\controllers;
 /** @var yii\web\View $this */
 
 $this->title = 'Калькулятор';
@@ -28,6 +28,10 @@ ini_set('display_startup_errors', 1);
 
 
     <main>
+
+    
+
+
     </main>
 
 </div>

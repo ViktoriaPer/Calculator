@@ -5,7 +5,7 @@ namespace app\controllers;
 use yii\web\Controller;
 use yii\web\ErrorAction;
 
-class SiteController extends Controller
+class CalculatorController extends Controller
 {
     public function actions()
     {
@@ -25,6 +25,5 @@ class SiteController extends Controller
 
         return $this->render('index');
     }
-
 
 }
