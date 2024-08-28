@@ -9,8 +9,6 @@ namespace app\assets;
 
 use yii\web\AssetBundle;
 
-public $depends = ['yii\web\YiiAsset', 'yii\bootstrap4\BootstrapAsset'];
-
 /**
  * Main application asset bundle.
  *
