@@ -35,6 +35,15 @@ class CalculatorController extends Controller
     }
 
 
+public function actionSub()
+{
+    $selectedMonth = Yii::$app->request->post('month');
+    $selectedTonnage = Yii::$app->request->post('tonnage');
+    $selectedRawType = Yii::$app->request->post('raw-type');
+    // Обработка выбранного месяца
+    // ...
+}
+
 
 
 
