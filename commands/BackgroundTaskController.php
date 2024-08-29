@@ -35,11 +35,11 @@ class BackgroundTaskController extends Controller
         {
             if (is_dir($basePath) === false) {
 
-                $this->stdout('Хранилище задач не определено' . PHP_EOL, Console::FG_RED);
-    
-                exit(ExitCode::UNSPECIFIED_ERROR);
+            $this->stdout('Хранилище задач не определено' . PHP_EOL, Console::FG_RED);
 
-            }
+            exit(ExitCode::UNSPECIFIED_ERROR);
+        }
+
         $jobs = scandir($basePath);
 
         array_splice($jobs, 0, 2);
@@ -53,13 +53,9 @@ class BackgroundTaskController extends Controller
 
             unlink($path);
         }
-        if ($this->demonize===false)
-        {
-            exit;
         }
 
-        }
+
+        
     }
 }
-
-
