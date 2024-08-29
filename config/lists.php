@@ -1,15 +1,7 @@
 <?php
-namespace App\Config;
 
-
-class Lists
-{
-
-public static function getLists()
-{
 return [
-    'months'=>
-    [
+    'months' => [
         'январь',
         'февраль',
         'август',
@@ -17,20 +9,15 @@ return [
         'октябрь',
         'ноябрь',
     ],
-    'tonnages'=>
-    [
+    'tonnages' => [
         25,
         50,
         75,
         100,
     ],
-
-    'raw_types'=>
-    [
+    'raw_types' => [
         'соя',
         'шрот',
         'жмых',
     ],
 ];
-}
-}

@@ -2,49 +2,46 @@
 
 namespace app\controllers;
 
-use Yii;
 use yii\web\Controller;
-use yii\web\ErrorAction;
-use app\config\Lists;
-
+use app\models\{
+    CalculationForm,
+    CalculationRepository
+};
+use app\components\calculator\CalculationResultsService;
 
 class CalculatorController extends Controller
 {
-    public function actions()
+    public function actionIndex(): string
     {
-        return [
-            'error' => [
-                'class' => ErrorAction::class,
-            ],
-        ];
-    }
+        $model = new CalculationForm();
 
-    /**
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $this->layout = 'blanc';
+        $repository = new CalculationRepository(
+            \Yii::$app->params['lists'],
+            \Yii::$app->params['prices'],
+        );
 
-        $lists = Lists::getLists();
+        $showCalculation = false;
 
-        return $this->render('index', 
-        [
-            'lists' => $lists,
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            (new CalculationResultsService($repository))->handle($model);
+            if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === true) {
+
+                $showCalculation = true;
+
+            }
+
+            if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === false) {
+
+                \Yii::$app->session->setFlash('error', 'Стоимость для указанных параметров отсутствует');
+
+                \Yii::$app->response->statusCode = 404;
+            }
+        }
+
+        return $this->render('index', [
+            'repository' => $repository,
+            'model' => $model,
+            'showCalculation' => $showCalculation,
         ]);
     }
-
-
-public function actionSub()
-{
-    $selectedMonth = Yii::$app->request->post('month');
-    $selectedTonnage = Yii::$app->request->post('tonnage');
-    $selectedRawType = Yii::$app->request->post('raw-type');
-    // Обработка выбранного месяца
-    // ...
-}
-
-
-
-
 }
