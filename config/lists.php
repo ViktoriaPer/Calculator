@@ -1,5 +1,12 @@
 <?php
+namespace App\Config;
 
+
+class Lists
+{
+
+public static function getLists()
+{
 return [
     'months'=>
     [
@@ -25,3 +32,5 @@ return [
         'жмых',
     ],
 ];
+}
+}
