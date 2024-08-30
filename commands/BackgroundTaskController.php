@@ -14,14 +14,12 @@ use app\components\calculator\queue\ResultRenderer;
 
 class BackgroundTaskController extends Controller
 {
-    public $demonize=false;
+    public $demonize = false;
 
-    public function options($actionID):array;
+    public function options($actionID): array
     {
-        return ['demonize'];        
+        return ['demonize'];
     }
-
-
 
     public function actionIndex(): void
     {
@@ -35,27 +33,30 @@ class BackgroundTaskController extends Controller
         {
             if (is_dir($basePath) === false) {
 
-            $this->stdout('Хранилище задач не определено' . PHP_EOL, Console::FG_RED);
+                $this->stdout('Хранилище задач не определено' . PHP_EOL, Console::FG_RED);
+    
+                exit(ExitCode::UNSPECIFIED_ERROR);
+            }
 
-            exit(ExitCode::UNSPECIFIED_ERROR);
+            $jobs = scandir($basePath);
+
+            array_splice($jobs, 0, 2);
+    
+            foreach ($jobs as $job) {
+                $path = $basePath . DIRECTORY_SEPARATOR . $job;
+    
+                $state = json_decode(file_get_contents($path), true);
+    
+                $renderer->render($state);
+    
+                unlink($path);
+            }
+
+            if ($this->demonize===false)
+            {
+                exit;
+            }
         }
 
-        $jobs = scandir($basePath);
-
-        array_splice($jobs, 0, 2);
-
-        foreach ($jobs as $job) {
-            $path = $basePath . DIRECTORY_SEPARATOR . $job;
-
-            $state = json_decode(file_get_contents($path), true);
-
-            $renderer->render($state);
-
-            unlink($path);
-        }
-        }
-
-
-        
     }
 }
