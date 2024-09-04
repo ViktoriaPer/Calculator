@@ -22,10 +22,12 @@ use app\models\{
 
 class CalculateController extends Controller
 {
+    //такой тип данных, потому что иначе он выдает ошибку, что задан null 
     public ?string $month = null;
     public ?string $type = null;
     public ?int $tonnage = null;
 
+    //задала опции, чтобы они были доступны из коммандной строки
     public function options($actionID): array
     {
         return ['month', 'type', 'tonnage'];
@@ -33,40 +35,39 @@ class CalculateController extends Controller
 
     
 
-
+    //actionIndex - работает при запуске из консоли
     public function actionIndex(): void
     {
-        // Непосредственное заполнение модели из параметров
+        //Создала модель типа CalculationForm
         $model = new CalculationForm();
         
-        // Убедитесь, что параметры присваиваются модели
+        //Присвоила значения из командной строки в свойства самой модели
         $model->month = $this->month;
         $model->tonnage = $this->tonnage;
         $model->type = $this->type;
     
-        // Валидация модели
+        //Проверка, верно ли введены данные
         if (!$model->validate()) {
             foreach ($model->getErrors() as $errors) {
                 foreach ($errors as $error) {
                     $this->stdout($error . PHP_EOL, Console::FG_RED);
                 }
             }
-            exit(ExitCode::UNSPECIFIED_ERROR); // Завершение процесса с ошибкой
+            exit(ExitCode::UNSPECIFIED_ERROR);
         }
     
+        //Создание репозитория, передача в него данных
         $repository = new CalculationRepository(
             \Yii::$app->params['lists'],
             \Yii::$app->params['prices'],
         );
-    
+        //отправить данные на сервис и обработать их
         (new CalculationResultsService($repository))->handle($model);
-    
-        // Остальная часть вашего кода...
+
+        //исходный код, взятый из BackgroundTaskController.php
         $basePath = \Yii::getAlias('@runtime') . DIRECTORY_SEPARATOR . 'queue';
 
         $renderer = new ResultRenderer($this);
-
-        $this->stdout('Задачи отсутствуют. Ожидание задач' . PHP_EOL, Console::FG_CYAN);
 
         if (is_dir($basePath) === false) {
 
