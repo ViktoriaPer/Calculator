@@ -20,13 +20,11 @@ use app\models\{
 };
 
 
-
-
 class CalculateController extends Controller
 {
-    public string $month=null;
-    public string $type=null;
-    public int $tonnage=null;
+    public ?string $month = null;
+    public ?string $type = null;
+    public ?int $tonnage = null;
 
     public function options($actionID): array
     {
@@ -37,17 +35,33 @@ class CalculateController extends Controller
 
 
     public function actionIndex(): void
-        {
-            $model = new CalculationForm();
-            $repository = new CalculationRepository(
-                \Yii::$app->params['lists'],
-                \Yii::$app->params['prices'],
-            );
-
-
-        (new CalculationResultsService($repository))->handle($model);
-        //добавление строки к ресалтсервису
+    {
+        // Непосредственное заполнение модели из параметров
+        $model = new CalculationForm();
         
+        // Убедитесь, что параметры присваиваются модели
+        $model->month = $this->month;
+        $model->tonnage = $this->tonnage;
+        $model->type = $this->type;
+    
+        // Валидация модели
+        if (!$model->validate()) {
+            foreach ($model->getErrors() as $errors) {
+                foreach ($errors as $error) {
+                    $this->stdout($error . PHP_EOL, Console::FG_RED);
+                }
+            }
+            exit(ExitCode::UNSPECIFIED_ERROR); // Завершение процесса с ошибкой
+        }
+    
+        $repository = new CalculationRepository(
+            \Yii::$app->params['lists'],
+            \Yii::$app->params['prices'],
+        );
+    
+        (new CalculationResultsService($repository))->handle($model);
+    
+        // Остальная часть вашего кода...
         $basePath = \Yii::getAlias('@runtime') . DIRECTORY_SEPARATOR . 'queue';
 
         $renderer = new ResultRenderer($this);
