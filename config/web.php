@@ -14,6 +14,9 @@ return [
     'components' => [
         'request' => [
             'cookieValidationKey' => 'sF6ugQqWMYrNL4Q',
+            'parsers' => [
+                'application/json' => \yii\web\JsonParser::class,
+            ],
         ],
         'cache' => [
             'class' => \yii\caching\FileCache::class,
