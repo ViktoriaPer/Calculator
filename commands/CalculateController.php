@@ -42,9 +42,9 @@ class CalculateController extends Controller
         $model = new CalculationForm();
         
         //Присвоила значения из командной строки в свойства самой модели
-        $model->month = $this->month;
-        $model->tonnage = $this->tonnage;
-        $model->type = $this->type;
+        $model->month = mb_strtolower($this->month);
+        $model->tonnage = mb_strtolower($this->tonnage);
+        $model->type = mb_strtolower($this->type);
     
         //Проверка, верно ли введены данные
         if (!$model->validate()) {
