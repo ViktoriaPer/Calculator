@@ -24,9 +24,9 @@ class PricesController extends \yii\web\Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         //Переменные, которые хранят значение из запроса в Postman
-        $month = \Yii::$app->request->get('month');
-        $type = \Yii::$app->request->get('type');
-        $tonnage = \Yii::$app->request->get('tonnage');
+        $month = mb_strtolower(\Yii::$app->request->get('month'));
+        $type = mb_strtolower(\Yii::$app->request->get('type'));
+        $tonnage =(\Yii::$app->request->get('tonnage'));
 
         //Подключение массива из params.php
         $prices = \Yii::$app->params['prices'];
@@ -46,5 +46,6 @@ class PricesController extends \yii\web\Controller
                 'message' => "Стоимость для выбранных параметров отсутствует",
             ];
         } 
+     
     }
 }
