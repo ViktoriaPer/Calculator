@@ -33,7 +33,7 @@ class ResultRenderer
             "Стоимость доставки: {$state['result']['price']} у.е.\n" .
             "Таблица, примененная расчета стоимости для типа сырья \"" . mb_convert_case($state['request']['type'], MB_CASE_TITLE, 'UTF-8') . "\":\n";
 
-        $this->stdOutWriter->stdout($message, Console::FG_GREEN);
+        $this->stdOutWriter->stdout($message, Console::FG_BLUE);
 
         $months = array_keys($state['result']['price_list']);
         $rows = [];
@@ -56,7 +56,7 @@ class ResultRenderer
             'rows' => $rows,
         ]);
 
-        $this->stdOutWriter->stdout($tableContent, Console::FG_GREEN);
+        $this->stdOutWriter->stdout($tableContent, Console::FG_BLUE);
 
         $this->stdOutWriter->stdout("\n\n");
     }
