@@ -40,12 +40,11 @@ class PricesController extends \yii\web\Controller
                     "$type" => $prices[$type],
                 ],
             ];
-        } else {
-    
-            return [
-                'message' => "Стоимость для выбранных параметров отсутствует",
-            ];
         } 
+
+        
+        return ['message' => "Стоимость для выбранных параметров отсутствует",];
+  
      
     }
 }
