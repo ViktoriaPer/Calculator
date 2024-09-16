@@ -18,6 +18,7 @@ return [
                 'application/json' => \yii\web\JsonParser::class,
             ],
         ],
+        'db' => require __DIR__ . '/db.php',
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
