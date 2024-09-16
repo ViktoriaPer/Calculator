@@ -9,3 +9,6 @@
 
 # Mac DS_Store Files
 .DS_Store
+
+/deletedlast
+/migrations/deletelast.php

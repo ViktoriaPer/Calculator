@@ -15,6 +15,7 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'db' => require __DIR__ . '/db.php',
         'log' => [
             'targets' => [
                 [

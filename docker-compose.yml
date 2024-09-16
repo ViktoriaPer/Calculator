@@ -7,8 +7,15 @@ services:
     container_name: calculator-php-fpm
     environment:
       X_API_KEY: ${X_API_KEY}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+
     volumes:
       - ./:/var/www/html
+    
       
 
   nginx:
@@ -32,3 +39,20 @@ services:
       URL: /swagger-ui/spec.yml
     volumes:
       - ./swagger/spec.yml:/usr/share/nginx/html/spec.yml
+
+
+  mariadb:
+    image: mariadb:10.6.14
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - mysql5:/var/lib/mysql
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_general_ci' ]
+
+volumes:
+  mysql5:
