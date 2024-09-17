@@ -51,8 +51,9 @@ services:
     ports:
       - ${DB_PORT}:3306
     volumes:
-      - mysql5:/var/lib/mysql
+      - mysql:/var/lib/mysql
     command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_general_ci' ]
 
 volumes:
-  mysql5:
+  mysql:
+
