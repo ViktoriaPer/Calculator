@@ -270,9 +270,9 @@ components:
       content:
         application/json:
           example:
-            - "жмых"
-            - "соя"
             - "шрот"
+            - "соя"  
+            - "жмых"
     SuccessfulPrices2Response:
       description: |
         Успешный ответ в составе стоимости "price" и прайса "price_list" с выводом всех стоимостей по всем месяцам для выбранного типа сырья

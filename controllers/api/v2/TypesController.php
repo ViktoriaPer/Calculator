@@ -2,7 +2,7 @@
 
 namespace app\controllers\api\v2;
 use app\models\Type; //модель
-class TypeController extends \yii\web\Controller
+class TypesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
 

@@ -1,7 +1,10 @@
 <?php
 
 namespace app\controllers\api\v2;
-
+use app\models\Price; //модели
+use app\models\Month;
+use app\models\Tonnage;
+use app\models\Type;
 class PricesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
@@ -28,23 +31,38 @@ class PricesController extends \yii\web\Controller
         $type = mb_strtolower(\Yii::$app->request->get('type'));
         $tonnage =(\Yii::$app->request->get('tonnage'));
 
-        //Подключение массива из params.php
-        $prices = \Yii::$app->params['prices'];
+        // Создаем запрос к базе данных для получения цен
+        $Pricelist = Price::find();
 
-        
-        // Проверка наличия данных и возврат цены
-        if (isset($prices[$type][$month][$tonnage])) {
-            return [
-                'price' => $prices[$type][$month][$tonnage],
-                'price_list'=>[
-                    "$type" => $prices[$type],
-                ],
+        // Добавляем фильтры по параметрам
+        if ($month) {
+            $Pricelist->andWhere(['month_id' => Month::find()->where(['name' => $month])->select('id')]);
+        }
+        if ($type) {
+            $Pricelist->andWhere(['raw_type_id' => Type::find()->where(['name' => $type])->select('id')]);
+        }
+        if ($tonnage) {
+            $Pricelist->andWhere(['tonnage_id' => Tonnage::find()->where(['value' => $tonnage])->select('id')]);
+        }
+
+        //Запрос
+        $prices = $Pricelist->all();
+
+        //Массив результата
+        $result = [];
+        foreach ($prices as $price) 
+
+        {
+            $result[] = 
+            [
+                'id' => $price->id,
+                'tonnage_id' => $price->tonnage_id,
+                'month_id' => $price->month_id,
+                'raw_type_id' => $price->raw_type_id,
+                'price' => $price->price,
             ];
-        } 
+        }
 
-        
-        return ['message' => "Стоимость для выбранных параметров отсутствует",];
-  
-     
+        return $result;
     }
 }
