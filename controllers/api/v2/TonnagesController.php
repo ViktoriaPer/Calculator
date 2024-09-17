@@ -1,7 +1,7 @@
 <?php
 
-namespace app\controllers\api\v1;
-
+namespace app\controllers\api\v2;
+use app\models\Tonnage; //модель
 class TonnagesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
@@ -23,6 +23,15 @@ class TonnagesController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        return \Yii::$app->params['lists']['tonnages'];
+        //достать данные базы данных из модели
+        $tonnages = Tonnage::find()->all();
+
+        //Результат
+        $result = [];
+        foreach ($tonnages as $tonnage) {
+            $result[] = $tonnage->value; 
+        }
+
+        return $result;
     }
 }

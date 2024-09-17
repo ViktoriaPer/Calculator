@@ -1,4 +1,3 @@
-php
 <?php
 
 namespace app\models;
@@ -9,6 +8,6 @@ class Month extends ActiveRecord
 {
     public static function tableName()
     {
-        return 'months'; // Название таблицы в базе данных
+        return 'months'; //Достать таблицу из БД с помощью ActiveRecord
     }
 }

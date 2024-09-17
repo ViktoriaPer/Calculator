@@ -1,7 +1,7 @@
 <?php
 
-namespace app\controllers\api\v1;
-use app\models\Month; // Подключаем модель
+namespace app\controllers\api\v2;
+use app\models\Month; //модель
 class MonthsController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
@@ -23,13 +23,13 @@ class MonthsController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        // Извлекаем данные из базы данных
+        //достать данные базы данных из модели
         $months = Month::find()->all();
 
-        // Формируем массив с результатами
+        //Результат
         $result = [];
         foreach ($months as $month) {
-            $result[$month->id] = $month->name; // id как ключ, name как значение
+            $result[] = $month->name; 
         }
 
         return $result;

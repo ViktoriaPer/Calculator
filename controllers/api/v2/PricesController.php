@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers\api\v1;
+namespace app\controllers\api\v2;
 
 class PricesController extends \yii\web\Controller
 {

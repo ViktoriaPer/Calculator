@@ -1,8 +1,8 @@
 <?php
 
-namespace app\controllers\api\v1;
-
-class TypesController extends \yii\web\Controller
+namespace app\controllers\api\v2;
+use app\models\Type; //модель
+class TypeController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
 
@@ -23,6 +23,15 @@ class TypesController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        return \Yii::$app->params['lists']['raw_types'];
+        //достать данные базы данных из модели
+        $raw_types = Type::find()->all();
+
+        //Результат
+        $result = [];
+        foreach ($raw_types as $raw_type) {
+            $result[] = $raw_type->name; 
+        }
+
+        return $result;
     }
 }
