@@ -26,10 +26,16 @@ class PricesController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        // Переменные, которые хранят значение из запроса в Postman
+        // Переменные, которые хранят значение из запроса
         $type = mb_strtolower(\Yii::$app->request->get('type'));
+        $monthName = mb_strtolower(\Yii::$app->request->get('month'));
+        $tonnageValue = \Yii::$app->request->get('tonnage');
 
-        // Создаем запрос к базе данных для получения цен
+        // Получение ID для месяца и тоннажа
+        $monthId = Month::find()->where(['name' => $monthName])->select('id')->scalar();
+        $tonnageId = Tonnage::find()->where(['value' => $tonnageValue])->select('id')->scalar();
+
+        // Подготовка базового запроса
         $Pricelist = Price::find();
 
         // Добавляем фильтры по типу
@@ -46,7 +52,14 @@ class PricesController extends \yii\web\Controller
             ];
         }
 
-        // Запрос
+        // Получаем конкретную цену для выбранных параметров
+        $selectedPrice = Price::find()
+            ->where(['raw_type_id' => $typeId, 'month_id' => $monthId, 'tonnage_id' => $tonnageId])
+            ->one();
+
+        $priceValue = $selectedPrice ? $selectedPrice->price : null;
+
+        // Запрос всех цен, которые соответствуют типу
         $prices = $Pricelist->all();
 
         // Массив результата
@@ -68,6 +81,11 @@ class PricesController extends \yii\web\Controller
             }
         }
 
-        return $result;
+        return [
+            'price' => $priceValue, // Добавляем цену, соответствующую запросу
+            'price_list' => $result,
+        ];
     }
+
+
 }
