@@ -26,41 +26,46 @@ class PricesController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        //Переменные, которые хранят значение из запроса в Postman
-        $month = mb_strtolower(\Yii::$app->request->get('month'));
+        // Переменные, которые хранят значение из запроса в Postman
         $type = mb_strtolower(\Yii::$app->request->get('type'));
-        $tonnage =(\Yii::$app->request->get('tonnage'));
 
         // Создаем запрос к базе данных для получения цен
         $Pricelist = Price::find();
 
-        // Добавляем фильтры по параметрам
-        if ($month) {
-            $Pricelist->andWhere(['month_id' => Month::find()->where(['name' => $month])->select('id')]);
-        }
+        // Добавляем фильтры по типу
         if ($type) {
-            $Pricelist->andWhere(['raw_type_id' => Type::find()->where(['name' => $type])->select('id')]);
-        }
-        if ($tonnage) {
-            $Pricelist->andWhere(['tonnage_id' => Tonnage::find()->where(['value' => $tonnage])->select('id')]);
+            $typeId = Type::find()->where(['name' => $type])->select('id')->scalar();
+            if ($typeId !== null) {
+                $Pricelist->andWhere(['raw_type_id' => $typeId]);
+            }
+        } else {
+            // Если тип не указан, возвращаем пустой массив
+            return [
+                'price' => null,
+                'price_list' => []
+            ];
         }
 
-        //Запрос
+        // Запрос
         $prices = $Pricelist->all();
 
-        //Массив результата
+        // Массив результата
         $result = [];
-        foreach ($prices as $price) 
+        foreach ($prices as $price) {
+            $monthName = Month::find()->select('name')->where(['id' => $price->month_id])->scalar();
+            $tonnageValue = Tonnage::find()->select('value')->where(['id' => $price->tonnage_id])->scalar();
+            $rawTypeName = Type::find()->select('name')->where(['id' => $price->raw_type_id])->scalar();
 
-        {
-            $result[] = 
-            [
-                'id' => $price->id,
-                'tonnage_id' => $price->tonnage_id,
-                'month_id' => $price->month_id,
-                'raw_type_id' => $price->raw_type_id,
-                'price' => $price->price,
-            ];
+            // Проверяем, совпадает ли тип сырья с запрашиваемым
+            if (mb_strtolower($rawTypeName) === $type) {
+                $result[] = [
+                    'id' => $price->id,
+                    'month' => $monthName,  // Добавляем название месяца
+                    'tonnage' => $tonnageValue,  // Добавляем значение тоннажа
+                    'raw_type' => $rawTypeName,  // Добавляем название типа сырья
+                    'price' => $price->price,
+                ];
+            }
         }
 
         return $result;
