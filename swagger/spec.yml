@@ -11,7 +11,7 @@ info:
       - реестр типов сырья доствки
       - реестр стоимости доставки
     
-    Разработчик [{ваше_имя}]({ссылка_на_профиль_github})
+    Разработчик [{Виктория Перунова}]({https://github.com/ViktoriaPer})
 servers:
   - url: http://localhost:8077
     description: Сервер локального тестирования
@@ -96,6 +96,75 @@ paths:
               example:
                 message: "Стоимость для выбранных параметров отсутствует"
 
+  /api/v2/months:
+    get:
+      tags:
+        - months
+      summary: Получить список месяцев
+      responses:
+        '200':
+          $ref: '#/components/responses/Month2SuccessfulResponse'
+        '401':
+          description: Авторизация не выполнена
+
+  /api/v2/tonnages:
+    get:
+      tags:
+        - tonnages
+      summary: Получить список тоннажей
+      responses:
+        '200':
+          $ref: '#/components/responses/Tonnages2SuccessfulResponse'
+        '401':
+          description: Авторизация не выполнена
+
+  /api/v2/types:
+    get:
+      tags:
+        - types
+      summary: Получить список типов сырья
+      responses:
+        '200':
+          $ref: '#/components/responses/Types2SuccessfulResponse'
+        '401':
+          description: Авторизация не выполнена
+
+  /api/v2/prices:
+    get:
+      tags:
+        - prices
+      summary: Рассчитать цену
+      parameters:
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "январь"
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "шрот"
+        - name: tonnage
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 50
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessfulPrices2Response'
+        '401':
+          description: Авторизация не выполнена
+        '404':
+          description: Стоимость для выбранных параметров отсутствует
+          content:
+            application/json:
+              example:
+                message: "Стоимость для выбранных параметров отсутствует"
+
 components:
   securitySchemes:
     tokenAuth:
@@ -131,7 +200,7 @@ components:
             - "шрот"
     SuccessfulPricesResponse:
       description: |
-        Успешный ответ в составе стоимости "price" и прайса "price_list" с выводом всех стоимостей по всем месяцям для выбранного типа сырья
+        Успешный ответ в составе стоимости "price" и прайса "price_list" с выводом всех стоимостей по всем месяцам для выбранного типа сырья
       content:
         application/json:
           example:
@@ -168,3 +237,78 @@ components:
                   50: 145
                   75: 136
                   100: 138
+
+    Month2SuccessfulResponse:
+      description: Успешный ответ
+      content:
+        application/json:
+          example:
+            - "январь"
+            - "февраль"
+            - "март"
+            - "апрель"
+            - "май"
+            - "июнь"
+            - "июль"
+            - "август"
+            - "сентябрь"
+            - "октябрь"
+            - "ноябрь"
+            - "декабрь"
+
+    Tonnages2SuccessfulResponse:
+      description: Успешный ответ
+      content:
+        application/json:
+          example:
+            - 25
+            - 50
+            - 75
+            - 100
+    Types2SuccessfulResponse:
+      description: Успешный ответ
+      content:
+        application/json:
+          example:
+            - "шрот"
+            - "соя"  
+            - "жмых"
+    SuccessfulPrices2Response:
+      description: |
+        Успешный ответ в составе стоимости "price" и прайса "price_list" с выводом всех стоимостей по всем месяцам для выбранного типа сырья
+      content:
+        application/json:
+          example:
+            price: 100
+            price_list:
+              жмых:
+                январь:
+                  25: 121
+                  50: 118
+                  75: 137
+                  100: 142
+                февраль:
+                  25: 137
+                  50: 121
+                  75: 124
+                  100: 131
+                август:
+                  25: 124
+                  50: 145
+                  75: 136
+                  100: 138
+                сентябрь:
+                  25: 137
+                  50: 147
+                  75: 143
+                  100: 112
+                октябрь:
+                  25: 122
+                  50: 143
+                  75: 112
+                  100: 117
+                ноябрь:
+                  25: 125
+                  50: 145
+                  75: 136
+                  100: 138  
