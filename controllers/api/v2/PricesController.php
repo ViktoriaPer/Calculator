@@ -1,7 +1,7 @@
 <?php
 
 namespace app\controllers\api\v2;
-use app\models\Price; //модели
+use app\models\Price; //Подключила модели
 use app\models\Month;
 use app\models\Tonnage;
 use app\models\Type;
@@ -26,26 +26,26 @@ class PricesController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
     
-        // Переменные, которые хранят значение из запроса
+        // Переменные, которые хранят значение из запроса постмана
         $type = mb_strtolower(\Yii::$app->request->get('type'));
         $monthName = mb_strtolower(\Yii::$app->request->get('month'));
         $tonnageValue = \Yii::$app->request->get('tonnage');
         
-        // Проверка на наличие необходимых параметров
+        //Если что-то из параметров пустое - выдаст соотв. сообщение
         if (empty($type) || empty($monthName) || empty($tonnageValue)) {
             return [
                 'error' => 'Ошибка, не указан один из параметров.',
             ];
         }
     
-        // Получение ID для месяца и тоннажа
+        // Получение ID для месяца и тоннажа из моделек
         $monthId = Month::find()->where(['name' => $monthName])->select('id')->scalar();
         $tonnageId = Tonnage::find()->where(['value' => $tonnageValue])->select('id')->scalar();
     
-        // Подготовка базового запроса
+        //Заполнение прайслиста ВСЕМИ ценами
         $Pricelist = Price::find();
     
-        // Добавляем фильтры по типу
+        //Прайслист для выбранного типа сырья
         if ($type) {
             $typeId = Type::find()->where(['name' => $type])->select('id')->scalar();
             if ($typeId !== null) {
@@ -53,33 +53,35 @@ class PricesController extends \yii\web\Controller
             }
         }
     
-        // Получаем конкретную цену для выбранных параметров
+        //Цена по параметрам
         $selectedPrice = Price::find()
             ->where(['raw_type_id' => $typeId, 'month_id' => $monthId, 'tonnage_id' => $tonnageId])
             ->one();
     
+        //поиск нужной цены
         $priceValue = $selectedPrice ? $selectedPrice->price : null;
     
-        // Если цена не найдена
+        //Ошибка, если нет такой цены в прайсе
         if ($priceValue === null) {
             return [
                 'error' => 'Цена не найдена.',
             ];
         }
     
-        // Запрос всех цен, которые соответствуют типу
+        //Выкачка всех цен для посл. сортировки
         $prices = $Pricelist->all();
     
-        // Массив результата
+        //формирование правильного результата
         $result = [];
         foreach ($prices as $price) {
             $monthName = Month::find()->select('name')->where(['id' => $price->month_id])->scalar();
             $tonnageValue = Tonnage::find()->select('value')->where(['id' => $price->tonnage_id])->scalar();
             $rawTypeName = Type::find()->select('name')->where(['id' => $price->raw_type_id])->scalar();
     
-            // Проверяем, совпадает ли тип сырья с запрашиваемым
+            //Если тип сырья совпал:
             if (mb_strtolower($rawTypeName) === $type) {
                 $result[] = [
+                    
                     'month' => $monthName,  // Добавляем название месяца
                     'tonnage' => $tonnageValue,  // Добавляем значение тоннажа
                     'price' => $price->price,
@@ -87,7 +89,7 @@ class PricesController extends \yii\web\Controller
             }
         }
     
-        // Сортировка месяцев
+        //Божественная сортировка месяцев
         $monthsOrder = [
             'январь' => 1, 
             'февраль' => 2, 
@@ -103,12 +105,13 @@ class PricesController extends \yii\web\Controller
             'декабрь' => 12,
         ];
     
+        //сортировочка
         usort($result, function ($a, $b) use ($monthsOrder) {
             return $monthsOrder[$a['month']] <=> $monthsOrder[$b['month']];
         });
     
         return [
-            'price' => $priceValue, // Добавляем цену, соответствующую запросу
+            'price' => $priceValue, //Цена по запросу
             'price_list' => [
                 "$rawTypeName" => $result,
             ],

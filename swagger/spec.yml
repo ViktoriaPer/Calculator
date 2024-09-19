@@ -246,23 +246,8 @@ components:
             price: 103
             price_list:
               шрот:
-                month: "январь"
-                tonnage: 25
-                price: 108
+                  month: "январь"
+                  tonnage: 25
+                  price: 108
 
-                month: "январь"
-                tonnage: 50
-                price: 103
-
-                month: "январь"
-                tonnage: 75
-                price: 165
-
-                month: "январь"
-                tonnage: 100
-                price: 152
-
-                month: "февраль"
-                tonnage: 25
-                price: 189
 
