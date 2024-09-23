@@ -125,6 +125,19 @@ class PricesController extends \yii\web\Controller
             return ['message' => 'Ошибка: месяц, тип сырья или тоннаж не найдены.'];
         }
 
+        // Проверка на существующую цену для этих параметров
+        $existingPrice = Price::find()
+        ->where([
+            'month_id' => $month->id,
+            'raw_type_id' => $rawType->id,
+            'tonnage_id' => $tonnage->id
+        ])
+        ->one();
+
+        if ($existingPrice) {
+        return ['message' => 'Ошибка: запись с такими параметрами уже существует.'];
+        }
+
         $price = new Price();
         $price->month_id = $month->id;
         $price->raw_type_id = $rawType->id; 
