@@ -32,8 +32,8 @@ class TypesController extends \yii\web\Controller
                 return $this->handleCreate();
     
             case 'DELETE':
-                $tonnage = \Yii::$app->request->get('tonnage'); 
-                return $this->handleDelete($tonnage); 
+                $type = \Yii::$app->request->get('type'); 
+                return $this->handleDelete($type); 
             default:
                 return ['message' => 'Метод не поддерживается.'];
         }
