@@ -69,13 +69,13 @@ class PricesController extends \yii\web\Controller
             ->all();
     
         $result = [
-            'selected_price' => $priceItem ? $priceItem->price : null,
+            'price' => $priceItem ? $priceItem->price : null,
             'price_list' => [],
         ];
     
     
         foreach ($allPrices as $price) {
-            $result['price_list'][$price->tonnage->value][$price->month->name] = $price->price;
+            $result['price_list'][$price->rawType->name][$price->month->name][$price->tonnage->value] = $price->price;
         }
     
         return $result;
