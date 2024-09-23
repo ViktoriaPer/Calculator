@@ -155,7 +155,7 @@ class PricesController extends \yii\web\Controller
     public function handleUpdate(): array
     {
         $monthName = \Yii::$app->request->get('month');
-        $rawTypeName = \Yii::$app->request->get('raw_type'); 
+        $rawTypeName = \Yii::$app->request->get('type'); 
         $tonnageValue = \Yii::$app->request->get('tonnage');
 
         $data = \Yii::$app->request->bodyParams;
@@ -167,14 +167,15 @@ class PricesController extends \yii\web\Controller
 
         $month = Month::find()->where(['name' => $monthName])->one();
         $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
+        $rawType = Type::find()->where(['name' => $rawTypeName])->one();
 
-        if (!$month || !$tonnage) {
-            return ['message' => 'Ошибка: месяц или тоннаж не найдены.'];
+        if (!$month || !$tonnage || !$rawType) {
+            return ['message' => 'Ошибка: месяц, тип сырья или тоннаж не найдены.'];
         }
 
 
         $price = Price::find()
-            ->where(['month_id' => $month->id, 'raw_type_id' => $rawTypeName, 'tonnage_id' => $tonnage->id])
+            ->where(['month_id' => $month->id, 'raw_type_id' => $rawType->id, 'tonnage_id' => $tonnage->id])
             ->one();
 
         if (!$price) {
