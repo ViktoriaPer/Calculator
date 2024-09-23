@@ -1,10 +1,13 @@
 <?php
 
 namespace app\controllers\api\v2;
-use app\models\Price; //Подключила модели
+
+use app\models\Price;
 use app\models\Month;
-use app\models\Tonnage;
 use app\models\Type;
+use app\models\Tonnage;
+use yii\web\Response;
+
 class PricesController extends \yii\web\Controller
 {
     public $enableCsrfValidation = false;
@@ -16,7 +19,7 @@ class PricesController extends \yii\web\Controller
             'verbFilter' => [
                 'class' => \yii\filters\VerbFilter::class,
                 'actions' => [
-                    'index' => ['GET'],
+                    'index' => ['GET', 'POST', 'PATCH', 'DELETE'],
                 ],
             ],
         ];
@@ -24,99 +27,158 @@ class PricesController extends \yii\web\Controller
 
     public function actionIndex(): array
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
-        // Переменные, которые хранят значение из запроса постмана
-        $type = mb_strtolower(\Yii::$app->request->get('type'));
-        $monthName = mb_strtolower(\Yii::$app->request->get('month'));
-        $tonnageValue = \Yii::$app->request->get('tonnage');
-        
-        //Если что-то из параметров пустое - выдаст соотв. сообщение
-        if (empty($type) || empty($monthName) || empty($tonnageValue)) {
-            return [
-                'error' => 'Ошибка, не указан один из параметров.',
-            ];
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        switch (\Yii::$app->request->method) {
+            case 'GET':
+                return $this->handleGet();
+            case 'POST':
+                return $this->handleCreate();
+            case 'PATCH':
+                return $this->handleUpdate();
+            case 'DELETE':
+                return $this->handleDelete();
+            default:
+                return ['message' => 'Метод не поддерживается.'];
         }
-    
-        // Получение ID для месяца и тоннажа из моделек
-        $monthId = Month::find()->where(['name' => $monthName])->select('id')->scalar();
-        $tonnageId = Tonnage::find()->where(['value' => $tonnageValue])->select('id')->scalar();
-    
-        //Заполнение прайслиста ВСЕМИ ценами
-        $Pricelist = Price::find();
-    
-        //Прайслист для выбранного типа сырья
-        if ($type) {
-            $typeId = Type::find()->where(['name' => $type])->select('id')->scalar();
-            if ($typeId !== null) {
-                $Pricelist->andWhere(['raw_type_id' => $typeId]);
-            }
-        }
-    
-        //Цена по параметрам
-        $selectedPrice = Price::find()
-            ->where(['raw_type_id' => $typeId, 'month_id' => $monthId, 'tonnage_id' => $tonnageId])
-            ->one();
-    
-        //поиск нужной цены
-        $priceValue = $selectedPrice ? $selectedPrice->price : null;
-    
-        //Ошибка, если нет такой цены в прайсе
-        if ($priceValue === null) {
-            return [
-                'error' => 'Цена не найдена.',
-            ];
-        }
-    
-        //Выкачка всех цен для посл. сортировки
-        $prices = $Pricelist->all();
-    
-        //формирование правильного результата
-        $result = [];
-        foreach ($prices as $price) {
-            $monthName = Month::find()->select('name')->where(['id' => $price->month_id])->scalar();
-            $tonnageValue = Tonnage::find()->select('value')->where(['id' => $price->tonnage_id])->scalar();
-            $rawTypeName = Type::find()->select('name')->where(['id' => $price->raw_type_id])->scalar();
-    
-            //Если тип сырья совпал:
-            if (mb_strtolower($rawTypeName) === $type) {
-                $result[] = [
-                    
-                    'month' => $monthName,  // Добавляем название месяца
-                    'tonnage' => $tonnageValue,  // Добавляем значение тоннажа
-                    'price' => $price->price,
-                ];
-            }
-        }
-    
-        //Божественная сортировка месяцев
-        $monthsOrder = [
-            'январь' => 1, 
-            'февраль' => 2, 
-            'март' => 3,
-            'апрель' => 4,
-            'май' => 5,
-            'июнь' => 6,
-            'июль' => 7,
-            'август' => 8,
-            'сентябрь' => 9,
-            'октябрь' => 10,
-            'ноябрь' => 11,
-            'декабрь' => 12,
-        ];
-    
-        //сортировочка
-        usort($result, function ($a, $b) use ($monthsOrder) {
-            return $monthsOrder[$a['month']] <=> $monthsOrder[$b['month']];
-        });
-    
-        return [
-            'price' => $priceValue, //Цена по запросу
-            'price_list' => [
-                "$rawTypeName" => $result,
-            ],
-        ];
     }
 
+    public function handleGet(): array
+    {
+        $monthName = \Yii::$app->request->get('month');
+        $rawTypeName = \Yii::$app->request->get('type');
+        $tonnageValue = \Yii::$app->request->get('tonnage');
+    
+        $month = Month::find()->where(['name' => $monthName])->one();
+        $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
+        $rawType = Type::find()->where(['name' => $rawTypeName])->one(); 
+    
+        if (!$month || !$tonnage || !$rawType) {
+            return ['message' => 'Ошибка: месяц, тоннаж или тип сырья не найдены.'];
+        }
+    
 
+        $priceItem = Price::find()
+            ->where(['month_id' => $month->id, 'raw_type_id' => $rawType->id, 'tonnage_id' => $tonnage->id])
+            ->one();
+    
+
+        $allPrices = Price::find()
+            ->where(['raw_type_id' => $rawType->id])
+            ->with(['tonnage', 'month'])
+            ->all();
+    
+        $result = [
+            'selected_price' => $priceItem ? $priceItem->price : null,
+            'price_list' => [],
+        ];
+    
+    
+        foreach ($allPrices as $price) {
+            $result['price_list'][$price->tonnage->value][$price->month->name] = $price->price;
+        }
+    
+        return $result;
+    }
+    public function handleCreate(): array
+    {
+        $data = \Yii::$app->request->bodyParams;
+
+        $rawTypeName = isset($data['raw_type']) ? $data['raw_type'] : null; 
+        $monthName = isset($data['month']) ? $data['month'] : null;
+        $tonnageValue = isset($data['tonnage']) ? $data['tonnage'] : null;
+        $priceValue = isset($data['price']) ? $data['price'] : null;
+
+        if ($rawTypeName === null || $monthName === null || $tonnageValue === null || $priceValue === null) {
+            return ['message' => 'Ошибка: не указаны все параметры.'];
+        }
+
+        $month = Month::find()->where(['name' => $monthName])->one();
+        $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
+
+        if (!$month || !$tonnage) {
+            return ['message' => 'Ошибка: месяц или тоннаж не найдены.'];
+        }
+
+        $price = new Price();
+        $price->month_id = $month->id;
+        $price->raw_type_id = $rawTypeName; 
+        $price->tonnage_id = $tonnage->id;
+        $price->price = $priceValue;
+
+        if ($price->validate() && $price->save()) {
+            return ['message' => 'Цена успешно добавлена.'];
+        } else {
+            \Yii::error("Ошибка валидации: " . json_encode($price->errors), __METHOD__);
+            return ['message' => 'Ошибка при добавлении цены.'];
+        }
+    }
+
+    public function handleUpdate(): array
+    {
+        $monthName = \Yii::$app->request->get('month');
+        $rawTypeName = \Yii::$app->request->get('raw_type'); 
+        $tonnageValue = \Yii::$app->request->get('tonnage');
+
+        $data = \Yii::$app->request->bodyParams;
+        $priceValue = isset($data['price']) ? $data['price'] : null;
+
+        if ($priceValue === null) {
+            return ['message' => 'Ошибка: не указана цена.'];
+        }
+
+        $month = Month::find()->where(['name' => $monthName])->one();
+        $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
+
+        if (!$month || !$tonnage) {
+            return ['message' => 'Ошибка: месяц или тоннаж не найдены.'];
+        }
+
+
+        $price = Price::find()
+            ->where(['month_id' => $month->id, 'raw_type_id' => $rawTypeName, 'tonnage_id' => $tonnage->id])
+            ->one();
+
+        if (!$price) {
+            return ['message' => 'Ошибка: цена не найдена.'];
+        }
+
+        $price->price = $priceValue;
+
+        if ($price->validate() && $price->save()) {
+            return ['message' => 'Цена успешно обновлена.'];
+        } else {
+            \Yii::error("Ошибка валидации: " . json_encode($price->errors), __METHOD__);
+            return ['message' => 'Ошибка при обновлении цены.'];
+        }
+    }
+
+    public function handleDelete(): array
+    {
+        $monthName = \Yii::$app->request->get('month');
+        $rawTypeName = \Yii::$app->request->get('raw_type'); 
+        $tonnageValue = \Yii::$app->request->get('tonnage');
+
+        $month = Month::find()->where(['name' => $monthName])->one();
+        $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
+
+        if (!$month || !$tonnage) {
+            return ['message' => 'Ошибка: месяц или тоннаж не найдены.'];
+        }
+
+
+        $price = Price::find()
+            ->where(['month_id' => $month->id, 'raw_type_id' => $rawTypeName, 'tonnage_id' => $tonnage->id])
+            ->one();
+
+        if (!$price) {
+            return ['message' => 'Ошибка: цена не найдена.'];
+        }
+
+        if ($price->delete()) {
+            return ['message' => 'Цена успешно удалена.'];
+        } else {
+            return ['message' => 'Ошибка при удалении цены.'];
+        }
+    }
 }
