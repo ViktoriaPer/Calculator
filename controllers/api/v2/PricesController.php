@@ -109,7 +109,7 @@ class PricesController extends \yii\web\Controller
     {
         $data = \Yii::$app->request->bodyParams;
 
-        $rawTypeName = isset($data['raw_type']) ? $data['raw_type'] : null; 
+        $rawTypeName = isset($data['type']) ? $data['type'] : null; 
         $monthName = isset($data['month']) ? $data['month'] : null;
         $tonnageValue = isset($data['tonnage']) ? $data['tonnage'] : null;
         $priceValue = isset($data['price']) ? $data['price'] : null;
@@ -120,14 +120,14 @@ class PricesController extends \yii\web\Controller
 
         $month = Month::find()->where(['name' => $monthName])->one();
         $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
-
-        if (!$month || !$tonnage) {
-            return ['message' => 'Ошибка: месяц или тоннаж не найдены.'];
+        $rawType = Type::find()->where(['name' => $rawTypeName])->one();
+        if (!$month || !$tonnage || !$rawType) {
+            return ['message' => 'Ошибка: месяц, тип сырья или тоннаж не найдены.'];
         }
 
         $price = new Price();
         $price->month_id = $month->id;
-        $price->raw_type_id = $rawTypeName; 
+        $price->raw_type_id = $rawType->id; 
         $price->tonnage_id = $tonnage->id;
         $price->price = $priceValue;
 
