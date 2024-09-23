@@ -48,7 +48,8 @@ class PricesController extends \yii\web\Controller
         $monthName = \Yii::$app->request->get('month');
         $rawTypeName = \Yii::$app->request->get('type');
         $tonnageValue = \Yii::$app->request->get('tonnage');
-    
+        
+        // Получение необходимых данных
         $month = Month::find()->where(['name' => $monthName])->one();
         $tonnage = Tonnage::find()->where(['value' => $tonnageValue])->one();
         $rawType = Type::find()->where(['name' => $rawTypeName])->one(); 
@@ -57,12 +58,12 @@ class PricesController extends \yii\web\Controller
             return ['message' => 'Ошибка: месяц, тоннаж или тип сырья не найдены.'];
         }
     
-
+        // Получение цены по заданным параметрам
         $priceItem = Price::find()
             ->where(['month_id' => $month->id, 'raw_type_id' => $rawType->id, 'tonnage_id' => $tonnage->id])
             ->one();
     
-
+        // Получение всех цен для указанного типа сырья
         $allPrices = Price::find()
             ->where(['raw_type_id' => $rawType->id])
             ->with(['tonnage', 'month'])
@@ -73,10 +74,34 @@ class PricesController extends \yii\web\Controller
             'price_list' => [],
         ];
     
+        // Массив для правильного порядка месяцев
+        $monthOrder = [
+            'январь', 'февраль', 'март', 'апрель', 'май', 
+            'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
+        ];
     
+        // Формирование списка цен
         foreach ($allPrices as $price) {
-            $result['price_list'][$price->rawType->name][$price->month->name][$price->tonnage->value] = $price->price;
+            $monthName = $price->month->name;
+            $tonnageValue = $price->tonnage->value;
+            
+            // Добавление данных в массив результатов
+            if (!isset($result['price_list'][$price->rawType->name][$monthName])) {
+                $result['price_list'][$price->rawType->name][$monthName] = [];
+            }
+            
+            $result['price_list'][$price->rawType->name][$monthName][$tonnageValue] = $price->price;
         }
+    
+        // Упорядочивание месяцев
+        $orderedPriceList = [];
+        foreach ($monthOrder as $monthName) {
+            if (isset($result['price_list'][$rawType->name][$monthName])) {
+                $orderedPriceList[$rawType->name][$monthName] = $result['price_list'][$rawType->name][$monthName];
+            }
+        }
+    
+        $result['price_list'] = $orderedPriceList;
     
         return $result;
     }
