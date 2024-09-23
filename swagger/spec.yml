@@ -128,7 +128,13 @@ paths:
         - months
       summary: Удалить месяц по имени
       parameters:
-        - $ref: '#/components/parameters/MonthParameter'
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "январь"
+
       responses:
         '204':
           description: Успешное удаление
@@ -173,7 +179,12 @@ paths:
         - tonnages
       summary: Удалить тоннаж по значению
       parameters:
-        - $ref: '#/components/parameters/TonnageParameter'
+        - name: tonnage
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 25
       responses:
         '204':
           description: Успешное удаление
@@ -218,7 +229,12 @@ paths:
         - types
       summary: Удалить тип сырья по значению
       parameters:
-        - $ref: '#/components/parameters/RawTypeParameter'
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "шрот"
       responses:
         '204':
           description: Успешное удаление

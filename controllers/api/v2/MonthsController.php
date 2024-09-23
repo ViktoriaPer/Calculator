@@ -2,7 +2,9 @@
 
 namespace app\controllers\api\v2;
 use app\models\Month; //модель
+use yii\web\Response; // Добавляем класс для ответов
 class MonthsController extends \yii\web\Controller
+
 {
     public $enableCsrfValidation = false;
 
@@ -13,9 +15,7 @@ class MonthsController extends \yii\web\Controller
             'verbFilter' => [
                 'class' => \yii\filters\VerbFilter::class,
                 'actions' => [
-                    'index' => ['GET'],
-                    'delete' => ['DELETE'],
-                    'create' => ['POST'], 
+                    'index' => ['GET', 'DELETE','POST'],
                 ],
             ],
         ];
@@ -23,12 +23,32 @@ class MonthsController extends \yii\web\Controller
 
     public function actionIndex(): array
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //установить формат респонса
+        \Yii::$app->response->format = Response::FORMAT_JSON;
 
-        //достать данные базы данных из модели
+        switch (\Yii::$app->request->method) {
+            case 'GET':
+                return $this->handleGet();
+    
+            case 'POST':
+                return $this->handleCreate();
+    
+            case 'DELETE':
+                $month = \Yii::$app->request->get('month'); // Получаем параметр month из URL
+                return $this->handleDelete($month); // Параметр month из адреса передается в метод удаления как name
+    
+            //на случай ошибки метода
+            default:
+                return ['message' => 'Метод не поддерживается.'];
+        }
+    }
+
+    public function handleGet(): array
+    {
+        //Получаем данные из бд через модель
         $months = Month::find()->all();
 
-        //Результат
+        //вывод результата
         $result = [];
         foreach ($months as $month) {
             $result[] = $month->name; 
@@ -37,44 +57,55 @@ class MonthsController extends \yii\web\Controller
         return $result;
     }
 
-    public function actionCreate(): array
+    public function handleCreate(): array
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Получаем данные из POST-запроса
-        $name = Yii::$app->request->post('name');
-
-
-        // Проверка на существование месяца с таким именем
-        $existingMonth = Month::find()->where(['name' => $name])->one();
-        if ($existingMonth !== null) {
+        // Извлекаем данные из входящего запроса
+        $data = \Yii::$app->request->bodyParams;
+    
+        // Извлекаем значение месяца из запроса
+        $monthName = isset($data['month']) ? ($data['month']) : null;
+    
+        // Проверяем, указано ли имя месяца
+        if ($monthName === null || $monthName === '') {
             return [
-                'message' => 'Ошибка: месяц с таким именем уже существует.',
+                'message' => 'Ошибка: имя месяца не указано.'
             ];
         }
+    
+        // Проверяем, существует ли уже месяц с таким названием
+        if (Month::find()->where(['name' => $monthName])->exists()) {
+        return [
+            'message' => 'Ошибка: месяц с таким названием уже существует.'
+        ];
+         }
 
-        // Создаем новый объект месяца
+        // Создаем новую модель месяца
         $month = new Month();
-        $month->name = $name;
-
-        // Сохраняем месяц в базе данных
-        if ($month->save()) {
+        $month->name = $monthName; // Присваиваем значение полю name в модели
+    
+        // Проверка на корректность данных и попытка сохранения
+        if ($month->validate() && $month->save()) {
             return [
-                'message' => 'Месяц успешно добавлен.',
+                'message' => 'Месяц успешно добавлен.'
+            ];
+        } else {
+            \Yii::error("Ошибка валидации: " . json_encode($month->errors), __METHOD__);
+            return [
+                'message' => 'Ошибка при добавлении месяца.'
             ];
         }
-            return [
-                'message' => 'Ошибка при добавлении месяца.',
-            ];
-        
     }
 
-    public function actionDelete(string $name): array
+    public function handleDelete(string $name): array
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
         // Находим месяц по имени
         $month = Month::find()->where(['name' => $name])->one();
+
+        if ($month === null) {
+            return [
+                'message' => 'Ошибка: месяц не найден.',
+            ];
+        }
 
         // Удаляем месяц
         if ($month->delete()) {
@@ -83,8 +114,8 @@ class MonthsController extends \yii\web\Controller
             ];
         }
         return [
-                'message' => 'Ошибка при удалении месяца.',
-                ];
-        
+            'message' => 'Ошибка при удалении месяца.',
+        ];
     }
+
 }
