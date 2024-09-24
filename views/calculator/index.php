@@ -6,6 +6,10 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use app\models\Month;
+use app\models\Type;
+use app\models\Tonnage;
+
 ?>
 
 <style>
@@ -30,9 +34,7 @@ use yii\helpers\Html;
         <div class="mb-3">
             <?= $form->field($model, 'month')
                 ->label('Месяц')
-                ->dropDownList(array_map(function ($item) {
-                    return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
-                },  array_combine($repository->getMonths(), $repository->getMonths())), [
+                ->dropDownList(Month::find()->select(['name', 'id'])->indexBy('id')->column(), [
                     'prompt' => 'Выберите значение',
                 ]);
             ?>
@@ -41,7 +43,7 @@ use yii\helpers\Html;
         <div class="mb-3">
             <?= $form->field($model, 'tonnage')
                 ->label('Тоннаж')
-                ->dropDownList(array_combine($repository->getTonnages(), $repository->getTonnages()), [
+                ->dropDownList(Tonnage::find()->select(['value', 'id'])->indexBy('id')->column(), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>
@@ -50,9 +52,7 @@ use yii\helpers\Html;
         <div class="mb-3">
             <?= $form->field($model, 'type')
                 ->label('Тип сырья')
-                ->dropDownList(array_map(function ($item) {
-                    return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
-                }, array_combine($repository->getTypes(), $repository->getTypes())), [
+                ->dropDownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>
@@ -92,19 +92,19 @@ use yii\helpers\Html;
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <strong> Месяц: </strong>
-                            <?= mb_convert_case($model->month,  MB_CASE_TITLE, 'UTF-8') ?>
+                            <?= Month::findOne($model->month)->name ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Тоннаж: </strong>
-                            <?= mb_convert_case($model->tonnage, MB_CASE_TITLE, 'UTF-8') ?>
+                            <?= Tonnage::findOne($model->tonnage)->value ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Тип сырья: </strong>
-                            <?= mb_convert_case($model->type, MB_CASE_TITLE, 'UTF-8') ?>
+                            <?= Type::findOne($model->type)->name ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Итог, руб.: </strong>
-                            <?= $repository->getPrice($model->month, (int) $model->tonnage, $model->type) ?>
+                            <?= $repository->getPrice($model->month, (int)$model->tonnage, $model->type) ?>
                         </li>
                     </ul>
                 </div>
@@ -131,7 +131,7 @@ use yii\helpers\Html;
 
                                     <td
                                         <?php
-                                            if ($model->month === $month && (int) $model->tonnage === (int) $tonnage) {
+                                            if ($model->month === $month && (int)$model->tonnage === (int)$tonnage) {
                                                 echo 'class="with-border"';
                                             }
                                         ?>
