@@ -6,10 +6,6 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use app\models\Month;
-use app\models\Type;
-use app\models\Tonnage;
-
 ?>
 
 <style>
@@ -34,7 +30,9 @@ use app\models\Tonnage;
         <div class="mb-3">
             <?= $form->field($model, 'month')
                 ->label('Месяц')
-                ->dropDownList(Month::find()->select(['name', 'id'])->indexBy('id')->column(), [
+                ->dropDownList(array_map(function ($item) {
+                    return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
+                },  array_combine($repository->getMonths(), $repository->getMonths())), [
                     'prompt' => 'Выберите значение',
                 ]);
             ?>
@@ -43,7 +41,7 @@ use app\models\Tonnage;
         <div class="mb-3">
             <?= $form->field($model, 'tonnage')
                 ->label('Тоннаж')
-                ->dropDownList(Tonnage::find()->select(['value', 'id'])->indexBy('id')->column(), [
+                ->dropDownList(array_combine($repository->getTonnages(), $repository->getTonnages()), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>
@@ -52,7 +50,9 @@ use app\models\Tonnage;
         <div class="mb-3">
             <?= $form->field($model, 'type')
                 ->label('Тип сырья')
-                ->dropDownList(Type::find()->select(['name', 'id'])->indexBy('id')->column(), [
+                ->dropDownList(array_map(function ($item) {
+                    return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
+                }, array_combine($repository->getTypes(), $repository->getTypes())), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>
@@ -92,19 +92,19 @@ use app\models\Tonnage;
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <strong> Месяц: </strong>
-                            <?= Month::findOne($model->month)->name ?>
+                            <?= mb_convert_case($model->month,  MB_CASE_TITLE, 'UTF-8') ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Тоннаж: </strong>
-                            <?= Tonnage::findOne($model->tonnage)->value ?>
+                            <?= mb_convert_case($model->tonnage, MB_CASE_TITLE, 'UTF-8') ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Тип сырья: </strong>
-                            <?= Type::findOne($model->type)->name ?>
+                            <?= mb_convert_case($model->type, MB_CASE_TITLE, 'UTF-8') ?>
                         </li>
                         <li class="list-group-item">
                             <strong> Итог, руб.: </strong>
-                            <?= $repository->getPrice($model->month, (int)$model->tonnage, $model->type) ?>
+                            <?= $repository->getPrice($model->month, (int) $model->tonnage, $model->type) ?>
                         </li>
                     </ul>
                 </div>
@@ -131,7 +131,7 @@ use app\models\Tonnage;
 
                                     <td
                                         <?php
-                                            if ($model->month === $month && (int)$model->tonnage === (int)$tonnage) {
+                                            if ($model->month === $month && (int) $model->tonnage === (int) $tonnage) {
                                                 echo 'class="with-border"';
                                             }
                                         ?>
