@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\components\months;
+namespace app\components\types;
 
 use yii\db\Connection;
 use yii\db\Expression;
@@ -17,10 +17,10 @@ class MonthsRepository
         $this->writeConn = \Yii::$app->db;
     }
 
-    public function getMonths(): array
+    public function getTypesNames(): array
     {
         $query = $this->readConn->select(['name'])
-            ->from('months');
+            ->from('raw_types');
 
         return ArrayHelper::getColumn($query->all(), 'name');
     }
@@ -28,7 +28,7 @@ class MonthsRepository
     public function exist(string $name): bool
     {
         $query = $this->readConn->select(new Expression('COUNT(name) as cnt'))
-            ->from('months')
+            ->from('raw_types')
             ->where(['name' => $name]);
 
         return (bool) $query->one()['cnt'];
@@ -36,7 +36,7 @@ class MonthsRepository
 
     public function create(string $name): void
     {
-        $this->writeConn->createCommand()->insert('months', [
+        $this->writeConn->createCommand()->insert('raw_types', [
             'name' => $name,
         ])
         ->execute();
@@ -44,7 +44,7 @@ class MonthsRepository
 
     public function delete(string $name): void
     {
-        $this->writeConn->createCommand()->delete('months', [
+        $this->writeConn->createCommand()->delete('raw_types', [
             'name' => $name,
         ])
         ->execute();

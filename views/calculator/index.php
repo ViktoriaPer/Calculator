@@ -32,7 +32,7 @@ use yii\helpers\Html;
                 ->label('Месяц')
                 ->dropDownList(array_map(function ($item) {
                     return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
-                },  array_combine($repository->getMonths(), $repository->getMonths())), [
+                },  array_combine($monthsRepository->getMonths(), $monthsRepository->getMonths())), [
                     'prompt' => 'Выберите значение',
                 ]);
             ?>
@@ -41,7 +41,7 @@ use yii\helpers\Html;
         <div class="mb-3">
             <?= $form->field($model, 'tonnage')
                 ->label('Тоннаж')
-                ->dropDownList(array_combine($repository->getTonnages(), $repository->getTonnages()), [
+                ->dropDownList(array_combine($tonnagesRepository->getTonnages(), $tonnagesRepository->getTonnages()), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>
@@ -52,7 +52,7 @@ use yii\helpers\Html;
                 ->label('Тип сырья')
                 ->dropDownList(array_map(function ($item) {
                     return mb_convert_case($item, MB_CASE_TITLE, 'UTF-8');
-                }, array_combine($repository->getTypes(), $repository->getTypes())), [
+                }, array_combine($typesRepository->getTypes(), $typesRepository->getTypes())), [
                     'prompt' => 'Выберите значение',
                 ])
             ?>

@@ -5,7 +5,10 @@ namespace app\controllers;
 use yii\web\Controller;
 use app\models\{
     CalculationForm,
-    CalculationRepository
+    CalculationRepository,
+    MonthsRepository,
+    TonnagesRepository,
+    TypesRepository,
 };
 use app\components\calculator\CalculationResultsService;
 
@@ -15,22 +18,28 @@ class CalculatorController extends Controller
     {
         $model = new CalculationForm();
 
-        $repository = new CalculationRepository(
+        /*$repository = new CalculationRepository(
             \Yii::$app->params['lists'],
             \Yii::$app->params['prices'],
         );
+        */
+
+        $monthsRepository=new MonthsRepository();
+        $tonnagesRepository=new TonnagesRepository();
+        $typesRepository=new TypesRepository();
+        //$pricesRepository=new PricesRepository();
 
         $showCalculation = false;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            (new CalculationResultsService($repository))->handle($model);
+            (new CalculationResultsService($pricesRepository))->handle($model);
             if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === true) {
 
                 $showCalculation = true;
 
             }
 
-            if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === false) {
+            if ($pricesRepository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === false) {
 
                 \Yii::$app->session->setFlash('error', 'Стоимость для указанных параметров отсутствует');
 

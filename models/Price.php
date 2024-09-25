@@ -27,7 +27,7 @@ class Price extends ActiveRecord
         return $this->hasOne(Month::class, ['id' => 'month_id']);
     }
 
-    // Связь с моделью RawType
+    // Связь с моделью Type
     public function getRawType()
     {
         return $this->hasOne(Type::class, ['id' => 'raw_type_id']);
