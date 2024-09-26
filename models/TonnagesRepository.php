@@ -1,28 +1,26 @@
 <?php
 
 
-namespace app\components\tonnages;
+namespace app\models;
 
 use yii\db\Connection;
 use yii\db\Expression;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use app\models\Tonnage; 
+
 
 class TonnagesRepository
 {
-    private Connection $writeConn;
-
-    public function __construct(private readonly Query $readConn)
+    public function getTonnages(): array
     {
-        $this->writeConn = \Yii::$app->db;
-    }
+        $tonnages=Tonnage::find()->all();
+        $result = [];
+        foreach ($tonnages as $tonnage) {
+            $result[] = $tonnage->value; 
+        }
 
-    public function getTonnagesValues(): array
-    {
-        $query = $this->readConn->select(['value'])
-            ->from('tonnages');
-
-        return ArrayHelper::getColumn($query->all(), 'value');
+        return $result;
     }
 
     public function exist(string $value): bool

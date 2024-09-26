@@ -1,28 +1,25 @@
 <?php
 
 
-namespace app\components\types;
+namespace app\models;
 
 use yii\db\Connection;
 use yii\db\Expression;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
-
-class MonthsRepository
+use app\models\Type;
+class TypesRepository
 {
-    private Connection $writeConn;
-
-    public function __construct(private readonly Query $readConn)
+    
+    public function getTypes(): array
     {
-        $this->writeConn = \Yii::$app->db;
-    }
+        $types=Type::find()->all();
+        $result = [];
+        foreach ($types as $type) {
+            $result[] = $type->name; 
+        }
 
-    public function getTypesNames(): array
-    {
-        $query = $this->readConn->select(['name'])
-            ->from('raw_types');
-
-        return ArrayHelper::getColumn($query->all(), 'name');
+        return $result;
     }
 
     public function exist(string $name): bool

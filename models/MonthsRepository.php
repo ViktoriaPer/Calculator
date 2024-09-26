@@ -1,33 +1,26 @@
 <?php
 
 
-namespace app\components\months;
+namespace app\models;
 
-use yii\db\Connection;
-use yii\db\Expression;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
-
+use app\models\Month; //модель
 class MonthsRepository
 {
-    private Connection $writeConn;
-
-    public function __construct(private readonly Query $readConn)
-    {
-        $this->writeConn = \Yii::$app->db;
-    }
 
     public function getMonths(): array
     {
-        $query = $this->readConn->select(['name'])
-            ->from('months');
+        $months=Month::find()->all();
+        $result = [];
+        foreach ($months as $month) {
+            $result[] = $month->name; 
+        }
 
-        return ArrayHelper::getColumn($query->all(), 'name');
+        return $result;
     }
 
     public function exist(string $name): bool
     {
-        $query = $this->readConn->select(new Expression('COUNT(name) as cnt'))
+        $query = $this->months->select(new Expression('COUNT(name) as cnt'))
             ->from('months')
             ->where(['name' => $name]);
 
@@ -36,7 +29,7 @@ class MonthsRepository
 
     public function create(string $name): void
     {
-        $this->writeConn->createCommand()->insert('months', [
+        $this->months->createCommand()->insert('months', [
             'name' => $name,
         ])
         ->execute();
@@ -44,7 +37,7 @@ class MonthsRepository
 
     public function delete(string $name): void
     {
-        $this->writeConn->createCommand()->delete('months', [
+        $this->months->createCommand()->delete('months', [
             'name' => $name,
         ])
         ->execute();

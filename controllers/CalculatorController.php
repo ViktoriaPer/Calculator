@@ -5,7 +5,6 @@ namespace app\controllers;
 use yii\web\Controller;
 use app\models\{
     CalculationForm,
-    CalculationRepository,
     MonthsRepository,
     TonnagesRepository,
     TypesRepository,
@@ -30,7 +29,7 @@ class CalculatorController extends Controller
         //$pricesRepository=new PricesRepository();
 
         $showCalculation = false;
-
+/*
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             (new CalculationResultsService($pricesRepository))->handle($model);
             if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === true) {
@@ -46,9 +45,11 @@ class CalculatorController extends Controller
                 \Yii::$app->response->statusCode = 404;
             }
         }
-
+*/
         return $this->render('index', [
-            'repository' => $repository,
+            'monthsRepository' => $monthsRepository,
+            'tonnagesRepository' => $tonnagesRepository,
+            'typesRepository' => $typesRepository,
             'model' => $model,
             'showCalculation' => $showCalculation,
         ]);
