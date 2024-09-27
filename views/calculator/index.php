@@ -116,7 +116,7 @@ var_dump($repository->getPriceListTonnagesByRawType($model->type));
                     <thead>
                         <tr>
                             <th>Т/M</th>
-                            <?php foreach ($repository->getPriceListTonnagesByRawType($model->type) as $tonnage): ?>
+                            <?php foreach ($tonnagesRepository->getTonnages() as $tonnage): ?>
                                 <th><?= $tonnage ?></th>
                             <?php endforeach ?>
                         </tr>
