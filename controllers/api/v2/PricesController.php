@@ -73,6 +73,7 @@ class PricesController extends \yii\web\Controller
             'price' => $priceItem ? $priceItem->price : null,
             'price_list' => [],
         ];
+        if ($priceItem===null){return ['message' => 'Ошибка: месяц, тоннаж или тип сырья не найдены'];}
     
         // Массив для правильного порядка месяцев
         $monthOrder = [
