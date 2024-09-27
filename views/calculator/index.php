@@ -6,6 +6,7 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+var_dump($repository->getPriceListTonnagesByRawType($model->type));
 ?>
 
 <style>
@@ -109,8 +110,8 @@ use yii\helpers\Html;
                     </ul>
                 </div>
             </div>
-            <div class="col-md-6 table-responsive border rounded-1 shadow-lg p-0">
-                <table class="table table-hover table-striped text-center mb-0">
+            <div class="col-md-6 table-responsive border rounded-1 shadow-lg p-0" style="margin-bottom: 5%;">
+                <table class="table table-hover table-striped text-center mb-0" >
 
                     <thead>
                         <tr>

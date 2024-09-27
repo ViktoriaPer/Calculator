@@ -60,6 +60,7 @@ class PricesRepository
         $prices=$this->handleGet();
         $firstMonth = array_key_first($prices[$type]);
 
+        var_dump($prices[$type][$firstMonth]);
         return array_keys($prices[$type][$firstMonth]);
     }
 
