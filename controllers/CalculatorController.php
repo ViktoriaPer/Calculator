@@ -5,7 +5,10 @@ namespace app\controllers;
 use yii\web\Controller;
 use app\models\{
     CalculationForm,
-    CalculationRepository
+    MonthsRepository,
+    TonnagesRepository,
+    TypesRepository,
+    PricesRepository,
 };
 use app\components\calculator\CalculationResultsService;
 
@@ -15,10 +18,11 @@ class CalculatorController extends Controller
     {
         $model = new CalculationForm();
 
-        $repository = new CalculationRepository(
-            \Yii::$app->params['lists'],
-            \Yii::$app->params['prices'],
-        );
+
+        $monthsRepository=new MonthsRepository();
+        $tonnagesRepository=new TonnagesRepository();
+        $typesRepository=new TypesRepository();
+        $repository=new PricesRepository();
 
         $showCalculation = false;
 
@@ -39,6 +43,9 @@ class CalculatorController extends Controller
         }
 
         return $this->render('index', [
+            'monthsRepository' => $monthsRepository,
+            'tonnagesRepository' => $tonnagesRepository,
+            'typesRepository' => $typesRepository,
             'repository' => $repository,
             'model' => $model,
             'showCalculation' => $showCalculation,
