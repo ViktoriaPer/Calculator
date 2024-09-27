@@ -78,7 +78,7 @@ use yii\helpers\Html;
             </div>
         </div>
     </div>
-<?php endif ?>
+<?php endif?>
 
 <?php if ($showCalculation === true): ?>
 
@@ -104,7 +104,7 @@ use yii\helpers\Html;
                         </li>
                         <li class="list-group-item">
                             <strong> Итог, руб.: </strong>
-                            <?= $repository->getPrice($model->month, (int) $model->tonnage, $model->type) ?>
+                            <?=$repository->getPrice($model->month, (int) $model->tonnage, $model->type) ?>
                         </li>
                     </ul>
                 </div>

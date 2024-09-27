@@ -8,6 +8,7 @@ use app\models\{
     MonthsRepository,
     TonnagesRepository,
     TypesRepository,
+    PricesRepository,
 };
 use app\components\calculator\CalculationResultsService;
 
@@ -17,39 +18,35 @@ class CalculatorController extends Controller
     {
         $model = new CalculationForm();
 
-        /*$repository = new CalculationRepository(
-            \Yii::$app->params['lists'],
-            \Yii::$app->params['prices'],
-        );
-        */
 
         $monthsRepository=new MonthsRepository();
         $tonnagesRepository=new TonnagesRepository();
         $typesRepository=new TypesRepository();
-        //$pricesRepository=new PricesRepository();
+        $repository=new PricesRepository();
 
         $showCalculation = false;
-/*
+
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            (new CalculationResultsService($pricesRepository))->handle($model);
+            (new CalculationResultsService($repository))->handle($model);
             if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === true) {
 
                 $showCalculation = true;
 
             }
 
-            if ($pricesRepository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === false) {
+            if ($repository->isPriceExists($model->month, (int) $model->tonnage, $model->type) === false) {
 
                 \Yii::$app->session->setFlash('error', 'Стоимость для указанных параметров отсутствует');
 
                 \Yii::$app->response->statusCode = 404;
             }
         }
-*/
+
         return $this->render('index', [
             'monthsRepository' => $monthsRepository,
             'tonnagesRepository' => $tonnagesRepository,
             'typesRepository' => $typesRepository,
+            'repository' => $repository,
             'model' => $model,
             'showCalculation' => $showCalculation,
         ]);

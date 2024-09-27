@@ -3,15 +3,15 @@
 namespace app\components\calculator;
 
 use yii\base\Model;
-use app\models\CalculationRepository;
+use app\models\PricesRepository;
 
 use app\models\CalculationForm;
 
 class CalculationResultsService
 {
-    private CalculationRepository $repository;
+    private PricesRepository $repository;
 
-    public function __construct(CalculationRepository $repository)
+    public function __construct(PricesRepository $repository)
     {
         $this->repository = $repository;
     }
