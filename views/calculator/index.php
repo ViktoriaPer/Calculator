@@ -6,7 +6,6 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-var_dump($repository->getPriceListTonnagesByRawType($model->type));
 ?>
 
 <style>
