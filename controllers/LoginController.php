@@ -3,9 +3,9 @@
 namespace app\controllers;
 
 use yii\web\Controller;
-use app\models\SignupForm;
+use app\models\LoginForm;
 
-class SignupController extends Controller
+class LoginController extends Controller
 {
 
     public function actions()
@@ -21,7 +21,7 @@ class SignupController extends Controller
     public function actionIndex()
     {
 
-        $model = new SignupForm();
+        $model = new LoginForm();
 
         return $this->render('index', [
             'model' => $model,
