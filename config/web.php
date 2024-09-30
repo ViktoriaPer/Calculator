@@ -5,6 +5,7 @@ $params = require __DIR__ . '/params.php';
 return [
     'id' => 'calculator-yii2',
     'name' => 'Калькулятор',
+    'language' => 'ru-RU',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
