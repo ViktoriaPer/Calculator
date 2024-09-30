@@ -3,6 +3,7 @@
 /** @var \app\models\CalculationForm $model */
 /** @var \app\models\CalculationRepository $repository */
 /** @var bool $showCalculation */
+$this->title = 'Калькулятор';
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;

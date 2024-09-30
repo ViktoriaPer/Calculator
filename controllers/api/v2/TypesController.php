@@ -56,7 +56,9 @@ class TypesController extends \yii\web\Controller
     public function handleCreate(): array
     {
 
-        $data = \Yii::$app->request->bodyParams;
+        $data = array_map(function($value) {
+            return is_string($value) ? mb_strtolower($value, 'UTF-8') : $value;
+        }, \Yii::$app->request->bodyParams);
     
 
         $typeName = isset($data['type']) ? ($data['type']) : null;
