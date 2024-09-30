@@ -26,8 +26,7 @@ use yii\helpers\Html;
         ?>
 
         <div class="mb-3">
-            <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('Логин') ?>
-            <?= $model->getErrors('username') ? $form->field($model, 'username')->error() : ''; ?>
+            <?= $form->field($model, 'email')->textInput(['autofocus' => true])->label('Логин') ?>
         </div>
 
         <div class="mb-3">

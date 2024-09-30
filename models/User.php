@@ -29,6 +29,10 @@ namespace app\models;
            return static::findOne(['username' => $username]);
        }
 
+       public static function findByEmail($email)
+       {
+           return static::findOne(['email' => $email]);
+       }
        public function getId()
        {
            return $this->id; // Предполагается, что у вас есть поле `id` в таблице `user`

@@ -6,20 +6,20 @@ use yii\base\Model;
 
 class LoginForm extends Model
 {
-    public $username;
+    public $email;
     public $password;
 
     public function rules()
     {
         return [
-            [['username', 'password'], 'required', 'message' => 'Заполните поле'],
+            [['email', 'password'], 'required', 'message' => 'Заполните поле'],
             ['password', 'validatePassword'],
         ];
     }
 
     public function validatePassword($attribute, $params)
     {
-        $user = User::findByUsername($this->username); // Найти пользователя по имени
+        $user = User::findByEmail($this->email); // Найти пользователя по имени
 
         if (!$user || !Yii::$app->security->validatePassword($this->password, $user->password)) {
             $this->addError($attribute, 'Неправильный логин или пароль.');
@@ -29,7 +29,7 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) { // Проверка валидности данных формы
-            $user = User::findByUsername($this->username);
+            $user = User::findByEmail($this->email);
             if ($user && Yii::$app->security->validatePassword($this->password, $user->password)) {
                 return Yii::$app->user->login($user); // Вход пользователя
             } else {
