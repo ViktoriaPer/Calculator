@@ -25,13 +25,14 @@ use yii\helpers\Html;
             ]);
         ?>
 
-<div class="mb-3">
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('Логин') ?>
-          </div>
+        <div class="mb-3">
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('Логин') ?>
+            <?= $model->getErrors('username') ? $form->field($model, 'username')->error() : ''; ?>
+        </div>
 
-          <div class="mb-3">
-        <?= $form->field($model, 'password')->passwordInput()->label('Пароль') ?>
-          </div>
+        <div class="mb-3">
+            <?= $form->field($model, 'password')->passwordInput()->label('Пароль') ?>
+        </div>
 
         <div class="form-group mb-3">
             <?= Html::submitButton('Войти', ['class' => 'btn btn-success', 'name' => 'login-button']) ?>
@@ -40,21 +41,9 @@ use yii\helpers\Html;
         <div class="mb-3">
             Нет аккаунта? <?= Html::a('Зарегистрируйтесь', ['/signup']) ?> в системе 
         </div>
+        <div class="row justify-content-center mt-4">
 
-
-        
-
+    </div>
         <?php ActiveForm::end(); ?>
-
     </div>
 </div>
-
-<?php if (\Yii::$app->session->hasFlash('error') === true): ?>
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-            <div class="alert alert-danger">
-                <?= \Yii::$app->session->getFlash('error') ?>
-            </div>
-        </div>
-    </div>
-<?php endif?>
