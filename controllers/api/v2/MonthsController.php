@@ -60,29 +60,44 @@ class MonthsController extends \yii\web\Controller
     public function handleCreate(): array
     {
         // Извлекаем данные из входящего запроса
-        $data = \Yii::$app->request->bodyParams;
-    
+        $data = array_map(function($value) {
+            return is_string($value) ? mb_strtolower($value, 'UTF-8') : $value;
+        }, \Yii::$app->request->bodyParams);
+
         // Извлекаем значение месяца из запроса
         $monthName = isset($data['month']) ? ($data['month']) : null;
-    
+
         // Проверяем, указано ли имя месяца
         if ($monthName === null || $monthName === '') {
             return [
                 'message' => 'Ошибка: имя месяца не указано.'
             ];
         }
-    
+
+        // Массив существующих названий месяцев
+        $validMonths = [
+            'январь', 'февраль', 'март', 'апрель', 'май', 'июнь',
+            'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'
+        ];
+
+        // Проверяем, является ли введенное имя месяца действительным
+        if (!in_array($monthName, $validMonths)) {
+            return [
+                'message' => 'Ошибка: такого месяца не существует.'
+            ];
+        }
+
         // Проверяем, существует ли уже месяц с таким названием
         if (Month::find()->where(['name' => $monthName])->exists()) {
-        return [
-            'message' => 'Ошибка: месяц с таким названием уже существует.'
-        ];
-         }
+            return [
+                'message' => 'Ошибка: месяц с таким названием уже существует.'
+            ];
+        }
 
         // Создаем новую модель месяца
         $month = new Month();
         $month->name = $monthName; // Присваиваем значение полю name в модели
-    
+
         // Проверка на корректность данных и попытка сохранения
         if ($month->validate() && $month->save()) {
             return [
@@ -95,6 +110,7 @@ class MonthsController extends \yii\web\Controller
             ];
         }
     }
+
 
     public function handleDelete(string $name): array
     {
