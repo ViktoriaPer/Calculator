@@ -123,7 +123,7 @@ use yii\helpers\Html;
                 <tbody>
                     <?php 
                     // Получаем все месяцы и тоннажи
-                    $months = $repository->getPriceListMonthsByRawType($model->type);
+                    $months = $monthsRepository->getMonths(); // Используем новый репозиторий для месяцев
                     $tonnages = $tonnagesRepository->getTonnages();
 
                     // Формируем таблицу
@@ -133,16 +133,20 @@ use yii\helpers\Html;
                             <?php foreach ($tonnages as $tonnage): ?>
                                 <td
                                     <?php
-                                    // Проверяем если это тот месяц и тоннаж, который был введен
+                                    // Проверяем, если это тот месяц и тоннаж, который был введен
                                     if ($model->month === $month && (int)$model->tonnage === (int)$tonnage) {
                                         echo 'class="with-border"';
                                     }
-                                    ?>
-                                >
+                                    ?>>
                                     <?php
-                                    // Получаем цену или отображаем "-" если цена отсутствует
-                                    $price = $repository->getPriceListPriceByRawTypeAndMonth($model->type, $month);
-                                    echo isset($price[$tonnage]) ? $price[$tonnage] : '-';
+                                    // Получаем цену для данного тоннажа и месяца
+                                    if ($repository->isPriceExists($month, $tonnage, $model->type)) {
+                                        // Если цена существует, выводим её
+                                        echo $repository->getPrice($month, $tonnage, $model->type);
+                                    } else {
+                                        // Если цены нет, выводим "-"
+                                        echo '-';
+                                    }
                                     ?>
                                 </td>
                             <?php endforeach; ?>
@@ -151,7 +155,6 @@ use yii\helpers\Html;
                 </tbody>
             </table>
         </div>
-    </div>
 </div>
 
 <?php endif ?>
