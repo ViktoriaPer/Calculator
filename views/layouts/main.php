@@ -44,26 +44,38 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 ],
             ]);
 
-            // Добавляем информацию о текущем пользователе
             $username = Yii::$app->user->isGuest ? 'Гость' : Yii::$app->user->identity->username;
 
+            $items = [
+                [
+                    'label' => 'Вы вошли как ' . Html::encode($username),
+                    'url' => '#',
+                ],
+            ];
+            
+            // Добавляем элемент для истории расчетов только для авторизованных пользователей
+            if (!Yii::$app->user->isGuest) {
+                $items[] = [
+                    'label' => 'История расчетов',
+                    'url' => ['/history'], 
+                ];
+            }
+            
+            //Добавляем элемент для Входа/Выхода
+            $items[] = [
+                'label' => Yii::$app->user->isGuest ? 'Вход' : 'Выход',
+                'url' => Yii::$app->user->isGuest ? ['/login'] : ['/logout'],
+                'linkOptions' => Yii::$app->user->isGuest ? [] : ['data-method' => 'post'],
+            ];
+            
             echo Nav::widget([
                 'encodeLabels' => false,
-                'options'      => ['class' => 'navbar-nav navbar-right'],
-                'items'        => [
-                    [
-                        'label' => 'Вы вошли как ' . Html::encode($username),
-                    ],
-                    [
-                        'label' => Yii::$app->user->isGuest ? 'Вход' : 'Выход',
-                        'url' => Yii::$app->user->isGuest ? ['/login'] : ['/logout'],
-                        'linkOptions' => Yii::$app->user->isGuest ? [] : ['data-method' => 'post'], // Если выход, нужно использовать POST
-                    ],
-                ],
+                'options' => ['class' => 'navbar-nav ms-auto'],
+                'items' => $items,
             ]);
 
             NavBar::end();
-        ?>
+        ?>  
     </header>
 
     <main id="main" class="flex-shrink-0 mt-4" role="main">
@@ -73,7 +85,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <?php endif ?>
             <?= $content ?>
         </div>
+
+
+
     </main>
+
+
 
     <footer class="navbar fixed-bottom navbar-light bg-light">
         <div class="container">
@@ -84,6 +101,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     </footer>
 
     <?php $this->endBody() ?>
+                
+
 </body>
 
 </html>

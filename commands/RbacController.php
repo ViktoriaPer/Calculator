@@ -1,26 +1,38 @@
 <?php
 
-   namespace app\commands;
+namespace app\commands;
 
-   use Yii;
-   use yii\console\Controller;
+use Yii;
+use yii\console\Controller;
 
-   class RbacController extends Controller
-   {
-       public function actionInit()
-       {
-           $auth = Yii::$app->authManager;
+class RbacController extends Controller
+{
+    public function actionInit()
+    {
+        $auth = Yii::$app->authManager;
 
-           // Создаем роли
-           $guest = $auth->createRole('guest');
-           $user = $auth->createRole('user');
-           $admin = $auth->createRole('admin');
+        // Удаляем существующие роли, если они есть
+        $auth->removeAll(); // Удалить все роли и разрешения
 
-           // Добавляем роли в хранилище
-           $auth->add($guest);
-           $auth->add($user);
-           $auth->add($admin);
+        // Создаем роли
+        $guest = $auth->createRole('guest');
+        $user = $auth->createRole('user');
+        $admin = $auth->createRole('admin');
 
-           echo "Roles created.\n";
-       }
-   }
+        // Добавляем роли в хранилище
+        $auth->add($guest);
+        $auth->add($user);
+        $auth->add($admin);
+
+        // Создаем разрешение
+        $viewHistory = $auth->createPermission('viewHistory');
+        $viewHistory->description = 'Просмотр истории расчетов';
+        $auth->add($viewHistory);
+
+        // Назначаем разрешения ролям
+        $auth->addChild($user, $viewHistory); // пользователи user могут видеть историю
+        $auth->addChild($admin, $viewHistory); // администраторы admin могут видеть историю
+
+        echo "Roles and permissions created.\n";
+    }
+}
