@@ -48,9 +48,17 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             $user = User::findOne(Yii::$app->user->id); // Находим модель пользователя по ID
 
             $items = [
+
                 [
-                    'label' => 'Вы вошли как ' . Html::encode($username),
+                    'label' => 'Вы вошли как ' . $username,
+                    'options' => ['class' => 'nav-item disabled'], 
+                    'linkOptions' => ['class' => 'nav-link disabled'], 
                 ],
+            
+            ];
+            $items[] = [
+                'label' => 'Рассчитать цену',
+                'url' => ['/calculator'],  
             ];
 
             // Добавляем элемент для истории расчетов только для авторизованных пользователей
@@ -92,14 +100,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
     <main id="main" class="flex-shrink-0 mt-4" role="main">
         <div class="container">
-            <?php if (empty($this->params['breadcrumbs']) === false): ?>
-                <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
-            <?php endif ?>
             <?= $content ?>
         </div>
-
-
-
     </main>
 
 
