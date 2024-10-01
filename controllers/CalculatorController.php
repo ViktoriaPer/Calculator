@@ -51,4 +51,5 @@ class CalculatorController extends Controller
             'showCalculation' => $showCalculation,
         ]);
     }
+
 }

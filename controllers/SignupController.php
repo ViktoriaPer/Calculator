@@ -14,7 +14,7 @@ class SignupController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Вы успешно зарегистрировались.');
-            return $this->goHome();
+            return $this->redirect(['/calculator']);
         }
 
         return $this->render('index', [

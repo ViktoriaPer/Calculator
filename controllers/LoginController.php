@@ -18,18 +18,14 @@ class LoginController extends Controller
     }
 
 
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-        return $this->goHome();
-    }
+
 
     public function actionIndex()
     {
         $model = new LoginForm();
 
         if ($model->load(\Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack(); // Если вход успешен
+            return $this->redirect(['/calculator']);
         }
     
         return $this->render('index', [

@@ -8,6 +8,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use app\models\User; // Импортируйте модель User, если она находится в другой папке
 
 AppAsset::register($this);
 
@@ -35,25 +36,28 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <header>
 
         <?php
-            NavBar::begin(
-                [
-                    'brandLabel' => \Yii::$app->name,
-                    'brandUrl'   => \Yii::$app->homeUrl,
-                    'options'    => [
-                        'class' => 'navbar-inverse navbar-fixed-top navbar-light bg-warning',
-                    ],
-                ]
-            );
+            NavBar::begin([
+                'brandLabel' => \Yii::$app->name,
+                'brandUrl'   => \Yii::$app->homeUrl,
+                'options'    => [
+                    'class' => 'navbar-inverse navbar-fixed-top navbar-light bg-warning',
+                ],
+            ]);
+
+            // Добавляем информацию о текущем пользователе
+            $username = Yii::$app->user->isGuest ? 'Гость' : Yii::$app->user->identity->username;
 
             echo Nav::widget([
                 'encodeLabels' => false,
                 'options'      => ['class' => 'navbar-nav navbar-right'],
                 'items'        => [
                     [
-                        'label' => 'Вход',
-                        'url' => [
-                            '/login',
-                        ],
+                        'label' => 'Вы вошли как ' . Html::encode($username),
+                    ],
+                    [
+                        'label' => Yii::$app->user->isGuest ? 'Вход' : 'Выход',
+                        'url' => Yii::$app->user->isGuest ? ['/login'] : ['/logout'],
+                        'linkOptions' => Yii::$app->user->isGuest ? [] : ['data-method' => 'post'], // Если выход, нужно использовать POST
                     ],
                 ],
             ]);
