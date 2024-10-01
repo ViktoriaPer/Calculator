@@ -61,6 +61,10 @@ return [
             'identityClass' => 'app\models\User',
         ],
 
+        'authManager' => [
+        'class' => 'yii\rbac\DbManager',
+        ],
+
     ],
 
 

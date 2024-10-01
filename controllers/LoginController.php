@@ -18,6 +18,12 @@ class LoginController extends Controller
     }
 
 
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+        return $this->goHome();
+    }
+
     public function actionIndex()
     {
         $model = new LoginForm();
