@@ -11,7 +11,7 @@ use yii\helpers\Html;
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 border rounded-3 p-4 shadow">
+    <div class="col-md-6 border rounded-3 p-4 shadow" style="margin-bottom: 10%;">
         <?php $form = ActiveForm::begin(['id' => 'signup-form']); ?>
 
         <div class="mb-3">

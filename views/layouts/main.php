@@ -45,6 +45,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ]);
 
             $username = Yii::$app->user->isGuest ? 'Гость' : Yii::$app->user->identity->username;
+            $user = User::findOne(Yii::$app->user->id); // Находим модель пользователя по ID
 
             $items = [
                 [
@@ -52,22 +53,30 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     'url' => '#',
                 ],
             ];
-            
+
             // Добавляем элемент для истории расчетов только для авторизованных пользователей
             if (!Yii::$app->user->isGuest) {
                 $items[] = [
                     'label' => 'История расчетов',
-                    'url' => ['/history'], 
+                    'url' => ['/history'],  // Путь к странице истории расчетов
                 ];
             }
-            
-            //Добавляем элемент для Входа/Выхода
+
+            // Добавляем пункт управления учетными записями только для пользователей с ролью admin
+            if ($user && $user->getRole() === 'admin') {
+                $items[] = [
+                    'label' => 'Управление учетными записями',
+                    'url' => ['/useradmin'], // Путь к странице управления учетными записями
+                ];
+            }
+
+            // Добавляем элемент для Входа/Выхода
             $items[] = [
                 'label' => Yii::$app->user->isGuest ? 'Вход' : 'Выход',
                 'url' => Yii::$app->user->isGuest ? ['/login'] : ['/logout'],
                 'linkOptions' => Yii::$app->user->isGuest ? [] : ['data-method' => 'post'],
             ];
-            
+
             echo Nav::widget([
                 'encodeLabels' => false,
                 'options' => ['class' => 'navbar-nav ms-auto'],

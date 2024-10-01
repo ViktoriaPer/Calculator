@@ -13,6 +13,11 @@ namespace app\models;
            return 'user';
        }
 
+    public function getRole()
+        {
+            return $this->role; // Предполагаем, что поле role есть в базе данных
+        }
+
        public static function findIdentity($id)
        {
            return static::findOne($id);
