@@ -50,12 +50,15 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             $items = [
                 [
                     'label' => 'Вы вошли как ' . Html::encode($username),
-                    'url' => '#',
                 ],
             ];
 
             // Добавляем элемент для истории расчетов только для авторизованных пользователей
             if (!Yii::$app->user->isGuest) {
+                $items[] = [
+                    'label' => 'Профиль',
+                    'url' => ['/account'], // Путь к странице учетки
+                ];
                 $items[] = [
                     'label' => 'История расчетов',
                     'url' => ['/history'],  // Путь к странице истории расчетов
