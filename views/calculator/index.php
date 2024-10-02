@@ -133,8 +133,7 @@ use yii\helpers\Html;
                 </thead>
                 <tbody>
                     <?php 
-                    // Получаем все месяцы и тоннажи
-                    $months = $monthsRepository->getMonths(); // Используем новый репозиторий для месяцев
+                    $months = $monthsRepository->getMonths(); 
                     $tonnages = $tonnagesRepository->getTonnages();
 
                     // Формируем таблицу
@@ -144,18 +143,15 @@ use yii\helpers\Html;
                             <?php foreach ($tonnages as $tonnage): ?>
                                 <td
                                     <?php
-                                    // Проверяем, если это тот месяц и тоннаж, который был введен
+
                                     if ($model->month === $month && (int)$model->tonnage === (int)$tonnage) {
                                         echo 'class="with-border"';
                                     }
                                     ?>>
                                     <?php
-                                    // Получаем цену для данного тоннажа и месяца
                                     if ($repository->isPriceExists($month, $tonnage, $model->type)) {
-                                        // Если цена существует, выводим её
                                         echo $repository->getPrice($month, $tonnage, $model->type);
                                     } else {
-                                        // Если цены нет, выводим "-"
                                         echo '-';
                                     }
                                     ?>

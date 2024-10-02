@@ -11,8 +11,8 @@ class RbacController extends Controller
     {
         $auth = Yii::$app->authManager;
 
-        // Удаляем существующие роли, если они есть
-        $auth->removeAll(); // Удалить все роли и разрешения
+
+        $auth->removeAll(); // Удалить все роли и разрешения чтобы можно было короче обновлять
 
         // Создаем роли
         $guest = $auth->createRole('guest');
@@ -24,14 +24,12 @@ class RbacController extends Controller
         $auth->add($user);
         $auth->add($admin);
 
-        // Создаем разрешение
         $viewHistory = $auth->createPermission('viewHistory');
         $viewHistory->description = 'Просмотр истории расчетов';
         $auth->add($viewHistory);
 
-        // Назначаем разрешения ролям
-        $auth->addChild($user, $viewHistory); // пользователи user могут видеть историю
-        $auth->addChild($admin, $viewHistory); // администраторы admin могут видеть историю
+        $auth->addChild($user, $viewHistory); 
+        $auth->addChild($admin, $viewHistory); 
 
         echo "Roles and permissions created.\n";
     }

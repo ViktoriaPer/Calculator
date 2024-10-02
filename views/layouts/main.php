@@ -8,7 +8,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
-use app\models\User; // Импортируйте модель User, если она находится в другой папке
+use app\models\User; 
 
 AppAsset::register($this);
 
@@ -45,7 +45,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ]);
 
             $username = Yii::$app->user->isGuest ? 'Гость' : Yii::$app->user->identity->username;
-            $user = User::findOne(Yii::$app->user->id); // Находим модель пользователя по ID
+            $user = User::findOne(Yii::$app->user->id); 
 
             $items = [
 
@@ -56,28 +56,32 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 ],
             
             ];
-            $items[] = [
-                'label' => 'Рассчитать цену',
-                'url' => ['/calculator'],  
-            ];
+            
 
-            // Добавляем элемент для истории расчетов только для авторизованных пользователей
             if (!Yii::$app->user->isGuest) {
                 $items[] = [
                     'label' => 'Профиль',
-                    'url' => ['/account'], // Путь к странице учетки
+                    'url' => ['/account'], 
                 ];
+            }
+                
+                $items[] = [
+                    'label' => 'Рассчитать цену',
+                    'url' => ['/calculator'],  
+                ];
+
+            if (!Yii::$app->user->isGuest) {    
                 $items[] = [
                     'label' => 'История расчетов',
-                    'url' => ['/history'],  // Путь к странице истории расчетов
+                    'url' => ['/history'],
                 ];
             }
 
             // Добавляем пункт управления учетными записями только для пользователей с ролью admin
             if ($user && $user->getRole() === 'admin') {
                 $items[] = [
-                    'label' => 'Управление учетными записями',
-                    'url' => ['/useradmin'], // Путь к странице управления учетными записями
+                    'label' => 'Пользователи',
+                    'url' => ['/useradmin'], 
                 ];
             }
 

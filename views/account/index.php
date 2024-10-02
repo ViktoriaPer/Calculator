@@ -11,7 +11,7 @@ use yii\helpers\Html;
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 border rounded-3 p-4 shadow">
+    <div class="col-md-6 border rounded-3 p-4 shadow" style="margin-bottom: 10%;">
         <?php $form = ActiveForm::begin(['id' => 'account-form']); ?>
 
         <div class="profile-index">
@@ -22,7 +22,7 @@ use yii\helpers\Html;
             </p>
 
             <p>
-                <?= Html::a('История расчетов', ['history/index'], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('История расчетов', ['/history'], ['class' => 'btn btn-primary']) ?>
                 <?= Html::a('Редактировать аккаунт', ['#'], ['class' => 'btn btn-warning']) ?>
                 <?= Html::a('Удалить аккаунт', ['#'], ['class' => 'btn btn-danger']) ?>
             </p>

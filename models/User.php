@@ -15,18 +15,12 @@ namespace app\models;
 
     public function getRole()
         {
-            return $this->role; // Предполагаем, что поле role есть в базе данных
+            return $this->role; 
         }
 
        public static function findIdentity($id)
        {
            return static::findOne($id);
-       }
-
-       public static function findIdentityByAccessToken($token, $type = null)
-       {
-           // В зависимости от вашего проекта, вы можете реализовать этот метод
-           return null;
        }
 
        public static function findByUsername($username)
@@ -43,17 +37,6 @@ namespace app\models;
            return $this->id; // Предполагается, что у вас есть поле `id` в таблице `user`
        }
 
-       public function getAuthKey()
-       {
-           // Этот метод можно реализовать, если вы используете аутентификацию по токенам
-           return null;
-       }
-
-       public function validateAuthKey($authKey)
-       {
-           // Этот метод можно реализовать, если вы используете аутентификацию по токенам
-           return false;
-       }
 
        public function rules()
        {

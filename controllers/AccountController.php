@@ -4,13 +4,17 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use app\models\User;
 
 class AccountController extends Controller
 {
     public function actionIndex()
     {
-        // Получаем текущего пользователя
+        if (Yii::$app->user->isGuest) {
+            throw new ForbiddenHttpException('У вас нет доступа к этой странице.');
+        }
+
         $user = Yii::$app->user->identity;
 
         // Параметры профиля передаем в представление

@@ -1,6 +1,6 @@
 <?php
 
-$this->title = 'Управление учетными записями';
+$this->title = 'Пользователи';
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -8,11 +8,11 @@ use yii\grid\GridView;
 ?>
 
 <div class="text-center mb-4 mt-3">
-    <h1>Управление учетными записями</h1>
+    <h1>Пользователи</h1>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 border rounded-3 p-4 shadow">
+    <div class="col-md-6 border rounded-3 p-4 shadow" style="margin-bottom: 10%;">
         <?php $form = ActiveForm::begin(['id' => 'useradmin-form']); ?>
 
 
@@ -26,7 +26,6 @@ use yii\grid\GridView;
             'username',
             'email',
             'role',
-            // Добавьте другие поля пользователя, если необходимо
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Действия',

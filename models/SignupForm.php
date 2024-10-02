@@ -41,7 +41,7 @@ class SignupForm extends Model
             $user->username = $this->username;
             $user->email = $this->email;
             $user->password = \Yii::$app->security->generatePasswordHash($this->password);
-            // Поле role будет автоматически установлено в 'user' в модели User
+            // Поле role будет автоматически установлено в 'user' в модели User :)
 
             return $user->save() ? $user : null;
         }
