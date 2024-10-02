@@ -2,9 +2,7 @@
 
 use yii\db\Migration;
 
-/**
- * Handles the creation of table `{{%tonnages}}`.
- */
+
 class m240912_155062_fill_prices_table extends Migration
 {
     /**
@@ -34,6 +32,6 @@ JOIN
      */
     public function safeDown()
     {
-        $this->dropTable('{{%tonnages}}');
+        $this->dropTable('{{%prices}}');
     }
 }

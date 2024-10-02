@@ -2,9 +2,7 @@
 
 use yii\db\Migration;
 
-/**
- * Handles the creation of table `{{%tonnages}}`.
- */
+
 class m240912_155059_fill_tonnages_table extends Migration
 {
     /**
