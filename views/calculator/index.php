@@ -4,7 +4,7 @@
 /** @var \app\models\CalculationRepository $repository */
 /** @var bool $showCalculation */
 $this->title = 'Калькулятор';
-
+use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 ?>
@@ -18,6 +18,17 @@ use yii\helpers\Html;
 <div class="text-center mb-4 mt-3">
     <h1>Калькулятор стоимости доставки сырья</h1>
 </div>
+
+<?php if (Yii::$app->session->hasFlash('success')): ?>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= Yii::$app->session->getFlash('success') ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
 <div class="row justify-content-center">
     <div class="col-md-6 border rounded-3 p-4 shadow">
@@ -122,8 +133,7 @@ use yii\helpers\Html;
                 </thead>
                 <tbody>
                     <?php 
-                    // Получаем все месяцы и тоннажи
-                    $months = $repository->getPriceListMonthsByRawType($model->type);
+                    $months = $monthsRepository->getMonths(); 
                     $tonnages = $tonnagesRepository->getTonnages();
 
                     // Формируем таблицу
@@ -133,16 +143,17 @@ use yii\helpers\Html;
                             <?php foreach ($tonnages as $tonnage): ?>
                                 <td
                                     <?php
-                                    // Проверяем если это тот месяц и тоннаж, который был введен
+
                                     if ($model->month === $month && (int)$model->tonnage === (int)$tonnage) {
                                         echo 'class="with-border"';
                                     }
-                                    ?>
-                                >
+                                    ?>>
                                     <?php
-                                    // Получаем цену или отображаем "-" если цена отсутствует
-                                    $price = $repository->getPriceListPriceByRawTypeAndMonth($model->type, $month);
-                                    echo isset($price[$tonnage]) ? $price[$tonnage] : '-';
+                                    if ($repository->isPriceExists($month, $tonnage, $model->type)) {
+                                        echo $repository->getPrice($month, $tonnage, $model->type);
+                                    } else {
+                                        echo '-';
+                                    }
                                     ?>
                                 </td>
                             <?php endforeach; ?>
@@ -151,7 +162,6 @@ use yii\helpers\Html;
                 </tbody>
             </table>
         </div>
-    </div>
 </div>
 
 <?php endif ?>

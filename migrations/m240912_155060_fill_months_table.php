@@ -2,9 +2,7 @@
 
 use yii\db\Migration;
 
-/**
- * Handles the creation of table `{{%tonnages}}`.
- */
+
 class m240912_155060_fill_months_table extends Migration
 {
     /**
@@ -25,6 +23,6 @@ class m240912_155060_fill_months_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%tonnages}}');
+        $this->dropTable('{{%months}}');
     }
 }

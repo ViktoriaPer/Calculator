@@ -2,9 +2,7 @@
 
 use yii\db\Migration;
 
-/**
- * Handles the creation of table `{{%tonnages}}`.
- */
+
 class m240912_155057_create_raw_types_table extends Migration
 {
     /**
@@ -28,6 +26,6 @@ class m240912_155057_create_raw_types_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%tonnages}}');
+        $this->dropTable('{{%raw_types}}');
     }
 }
