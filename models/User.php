@@ -23,6 +23,12 @@ namespace app\models;
            return static::findOne($id);
        }
 
+       public static function findIdentityByAccessToken($token, $type = null)
+       {
+           // мб пригодится
+           return null;
+       }
+
        public static function findByUsername($username)
        {
            return static::findOne(['username' => $username]);
@@ -37,6 +43,17 @@ namespace app\models;
            return $this->id; // Предполагается, что у вас есть поле `id` в таблице `user`
        }
 
+       public function getAuthKey()
+       {
+           // вдруг нужно??
+           return null;
+       }
+
+       public function validateAuthKey($authKey)
+       {
+           // нужно ли??
+           return false;
+       }
 
        public function rules()
        {
